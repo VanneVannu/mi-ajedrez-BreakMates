@@ -154,7 +154,18 @@ function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
   const pOrigen = cOrigenNodo.textContent;
   const pDestino = cDestinoNodo.textContent;
 
-  // Procesar almacenamiento de bajas en los laterales
+  // --- NUEVO: REPRODUCIR SONIDO SEGÚN LA JUGADA ---
+  if (pDestino !== "") {
+    // Si la casilla de destino tiene una pieza, es una captura
+    sonidoCaptura.currentTime = 0; // Reinicia el audio por si se toca muy rápido
+    sonidoCaptura.play().catch(e => console.log("El navegador bloqueó el audio hasta que hagas clic en la pantalla"));
+  } else {
+    // Si la casilla está vacía, es un movimiento normal
+    sonidoMover.currentTime = 0;
+    sonidoMover.play().catch(e => console.log("El navegador bloqueó el audio hasta que hagas clic en la pantalla"));
+  }
+
+  // Procesar almacenamiento de bajas en los laterales (Se mantiene igual)
   if (pDestino !== "") {
     const elementoPiezaCaida = document.createElement('div');
     elementoPiezaCaida.textContent = pDestino;
@@ -183,6 +194,7 @@ function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
     indicadorTurno.textContent = turnoActual.toUpperCase();
   }
 }
+
 
 // GESTOR DE CLICS LOCALES (TUS JUGADAS)
 casillas.forEach(casilla => {
