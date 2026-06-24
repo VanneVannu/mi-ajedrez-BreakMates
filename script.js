@@ -1,6 +1,6 @@
 const socket = io();
 const sonidoMover = new Audio('mover.mp3');
-const sonidoRosa = new Audio('captura.mp3'); 
+const sonidoRosa = new Audio('capturar.mp3'); 
 let casillaOrigen = null;
 let turnoActual = "blancas";
 let juegoTerminado = false;
