@@ -1,0 +1,149 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #0d0c1d; /* Negro cyberpunk profundo */
+  margin: 0;
+  font-family: sans-serif;
+}
+
+#interfaz {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 620px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+#marcador-turno {
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+#bando-actual {
+  color: #00f0ff; /* Texto de turno en celeste neón */
+  text-shadow: 0 0 8px #00f0ff;
+}
+
+#btn-reiniciar {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #ff007f; /* Botón fucsia */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+  transition: all 0.2s;
+}
+
+#btn-reiniciar:hover {
+  background-color: #ff3399;
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.8);
+}
+
+#zona-juego {
+  display: flex;
+  gap: 15px;
+  align-items: stretch;
+}
+
+.cementerio {
+  width: 50px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid #5c134f;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 30px;
+  gap: 5px;
+  color: #fff;
+  min-height: 460px;
+}
+
+#contenedor-tablero {
+  position: relative;
+}
+
+#tablero {
+  display: grid;
+  grid-template-columns: repeat(8, 60px);
+  grid-template-rows: repeat(8, 60px);
+  border: 5px solid #1a1a1a;
+  box-shadow: 0 0 30px rgba(92, 19, 79, 0.6); /* Brillo morado alrededor del tablero */
+}
+
+.casilla {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+/* EFECTO SELECCIÓN: Tu pieza brillará en cian neón */
+.seleccionada {
+  outline: 4px solid #00f0ff;
+  outline-offset: -4px;
+  background-color: rgba(0, 240, 255, 0.3) !important;
+  backdrop-filter: brightness(1.2);
+}
+
+#pantalla-victoria {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(13, 12, 29, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  border: 5px solid #ff007f;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#pantalla-victoria h2 {
+  font-size: 42px;
+  margin: 0;
+  color: #00f0ff; /* Letrero de Jaque Mate en cian brillante */
+  text-shadow: 0 0 15px #00f0ff;
+  letter-spacing: 2px;
+}
+
+#pantalla-victoria p {
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+.oculto {
+  display: none !important;
+}
+
+/* LÓGICA DE CORES DE LAS CASILLAS */
+#tablero .casilla:nth-child(-n+8):nth-child(even),
+#tablero .casilla:nth-child(n+9):nth-child(-n+16):nth-child(odd),
+#tablero .casilla:nth-child(n+17):nth-child(-n+24):nth-child(even),
+#tablero .casilla:nth-child(n+25):nth-child(-n+32):nth-child(odd),
+#tablero .casilla:nth-child(n+33):nth-child(-n+40):nth-child(even),
+#tablero .casilla:nth-child(n+41):nth-child(-n+48):nth-child(odd),
+#tablero .casilla:nth-child(n+49):nth-child(-n+56):nth-child(even),
+#tablero .casilla:nth-child(n+57):nth-child(-n+64):nth-child(odd) {
+  background-color: #5c134f; /* Casillas oscuras: MORADO PROFUNDO */
+}
+
+#tablero .casilla {
+  background-color: #ff007f; /* Casillas claras: FUCSIA NEÓN */
+}
