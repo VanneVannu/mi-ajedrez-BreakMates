@@ -1,5 +1,9 @@
 const socket = io(); // Conectarse automáticamente al servidor Node.js en tiempo real
 
+// --- NUEVO: Cargar los archivos de sonido ---
+const sonidoMover = new Audio('mover.mp3');
+const sonidoCaptura = new Audio('capturar.mp3');
+
 let casillaOrigen = null; // Declarada una sola vez para el control de clics
 let turnoActual = "blancas";
 let juegoTerminado = false;
