@@ -4,6 +4,26 @@ const sonidoRosa = new Audio('capturar.mp3');
 let casillaOrigen = null;
 let turnoActual = "blancas";
 let juegoTerminado = false;
+
+// --- NUEVO: Control de bando elegido por el usuario ---
+let bandoAsignado = "espectador"; // Por defecto nadie puede mover hasta elegir bando
+const selectorBando = document.getElementById('selector-bando');
+
+// --- NUEVO: Control de bando elegido por el usuario ---
+let bandoAsignado = "espectador"; // Por defecto nadie puede mover hasta elegir bando
+const selectorBando = document.getElementById('selector-bando');
+
+// Escuchar cuando el jugador cambia su bando en el menú desplegable
+selectorBando.addEventListener('change', (e) => {
+  bandoAsignado = e.target.value;
+});
+
+
+// Escuchar cuando el jugador cambia su bando en el menú desplegable
+selectorBando.addEventListener('change', (e) => {
+  bandoAsignado = e.target.value;
+});
+
 const piezasBlancas = ["♙", "♖", "♘", "♗", "♕", "♔"];
 const piezasNegras  = ["♟", "♜", "♞", "♝", "♛", "♚"];
 const estadoInicial = [
@@ -16,6 +36,7 @@ const estadoInicial = [
   "♙","♙","♙","♙","♙","♙","♙","♙",
   "♖","♘","♗","♕","♔","♗","♘","♖"
 ];
+
 const casillas = document.querySelectorAll('.casilla');
 const indicadorTurno = document.getElementById('bando-actual');
 const btnReiniciar = document.getElementById('btn-reiniciar');
@@ -23,11 +44,13 @@ const cementerioBlancas = document.getElementById('capturadas-blancas');
 const cementerioNegras = document.getElementById('capturadas-negras');
 const pantallaVictoria = document.getElementById('pantalla-victoria');
 const mensajeGanador = document.getElementById('mensaje-ganador');
+
 btnReiniciar.addEventListener('click', () => {
   casillas.forEach((casilla, index) => {
     casilla.textContent = estadoInicial[index];
     casilla.classList.remove('seleccionada');
   });
+
   casillaOrigen = null;
   turnoActual = "blancas";
   juegoTerminado = false;
@@ -35,8 +58,16 @@ btnReiniciar.addEventListener('click', () => {
   cementerioBlancas.innerHTML = "";
   cementerioNegras.innerHTML = "";
   pantallaVictoria.classList.add('oculto');
+
+   // --- AQUÍ SE AGREGAN LAS DOS LÍNEAS NUEVAS ---
+  selectorBando.value = "espectador"; 
+  bandoAsignado = "espectador";
+
+    // Avisar al servidor (esta línea ya existía)
   socket.emit('solicitar-reinicio');
+
 });
+
 function validarMovimientoPeon(fOrigen, cOrigen, fDestino, cDestino, pieza, esCasillaVacia) {
   const difFila = fDestino - fOrigen;
   const difCol = Math.abs(cDestino - cOrigen);
@@ -153,6 +184,18 @@ function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
 casillas.forEach(casilla => {
   casilla.addEventListener('click', () => {
     if (juegoTerminado) return;
+    
+    // --- NUEVA REGLA: VALIDAR SI EL JUGADOR TIENE PERMISO DE MOVER ESTE BANDO ---
+if (bandoAsignado === "espectador") {
+  alert("Debes elegir un bando (Blancas o Negras) en el menú superior para poder jugar.");
+  return;
+}
+if (bandoAsignado !== turnoActual) {
+  alert("No puedes mover. Es el turno del bando contrario.");
+  return;
+}
+
+// --- PRIMER CLIC: SELECCIÓN (El código continúa igual hacia abajo...) ---
     if (casillaOrigen === null) {
       const pieza = casilla.textContent;
       if (pieza !== "") {
@@ -200,6 +243,7 @@ casillas.forEach(casilla => {
     }
   });
 });
+
 socket.on('oponente-movio', (datos) => moverPiezaEnPantalla(datos.fOri, datos.cOri, datos.fDes, datos.cDes));
 socket.on('oponente-reinicio', () => {
   casillas.forEach((casilla, index) => {
@@ -213,6 +257,10 @@ socket.on('oponente-reinicio', () => {
   cementerioBlancas.innerHTML = "";
   cementerioNegras.innerHTML = "";
   pantallaVictoria.classList.add('oculto');
+
+   // --- TAMBIÉN AQUÍ PARA EL JUGADOR REMOTO ---
+  selectorBando.value = "espectador"; 
+  bandoAsignado = "espectador";
+
   alert("El oponente ha reiniciado la partida.");
 });
-
