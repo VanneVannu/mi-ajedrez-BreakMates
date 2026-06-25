@@ -147,3 +147,43 @@ body {
 #tablero .casilla {
   background-color: #ff007f; /* Casillas claras: FUCSIA NEÓN */
 }
+
+/* NUEVO: Estilo neón para el selector de bando */
+#selector-bando {
+  background-color: #0d0c1d;
+  color: #00f0ff;
+  border: 2px solid #5c134f;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(92, 19, 79, 0.5);
+  transition: all 0.2s;
+}
+
+#selector-bando:focus {
+  border-color: #ff007f;
+  box-shadow: 0 0 12px rgba(255, 0, 127, 0.6);
+}
+
+/* NUEVO: Estilo neón para el selector de bando */
+#selector-bando {
+  background-color: #0d0c1d;
+  color: #00f0ff;
+  border: 2px solid #5c134f;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(92, 19, 79, 0.5);
+  transition: all 0.2s;
+}
+
+#selector-bando:focus {
+  border-color: #ff007f;
+  box-shadow: 0 0 12px rgba(255, 0, 127, 0.6);
+}
