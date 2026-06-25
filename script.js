@@ -9,10 +9,6 @@ let juegoTerminado = false;
 let bandoAsignado = "espectador"; // Por defecto nadie puede mover hasta elegir bando
 const selectorBando = document.getElementById('selector-bando');
 
-// --- NUEVO: Control de bando elegido por el usuario ---
-let bandoAsignado = "espectador"; // Por defecto nadie puede mover hasta elegir bando
-const selectorBando = document.getElementById('selector-bando');
-
 // Escuchar cuando el jugador cambia su bando en el menú desplegable
 selectorBando.addEventListener('change', (e) => {
   bandoAsignado = e.target.value;
