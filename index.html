@@ -8,10 +8,23 @@
 </head>
 <body>
 
+      <!-- ACTUALIZADO: Interfaz de control con selector de bando -->
   <div id="interfaz">
     <div id="marcador-turno">Turno: <span id="bando-actual">BLANCAS</span></div>
+    
+    <div>
+      <label for="selector-bando" style="font-weight: bold; margin-right: 5px;">Tu Bando:</label>
+      <select id="selector-bando">
+        <option value="espectador">Espectador</option>
+        <option value="blancas">Blancas (♙)</option>
+        <option value="negras">Negras (♟)</option>
+      </select>
+    </div>
+
     <button id="btn-reiniciar">Reiniciar Partida</button>
   </div>
+
+
 
   <div id="zona-juego">
     <div class="cementerio" id="capturadas-blancas"></div>
@@ -55,3 +68,4 @@
 
 </body>
 </html>
+
