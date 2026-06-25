@@ -11,6 +11,11 @@ const io = new Server(server);
 // Indicarle al servidor que comparta públicamente nuestros archivos visuales
 app.use(express.static(__dirname));
 
+// --- NUEVO: Ruta explícita para entregar el favicon sin bloqueos ---
+app.get('/favicon.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'favicon.png'));
+});
+
 // Lógica de conexión en tiempo real
 io.on('connection', (socket) => {
   console.log('¡Un jugador se ha conectado! ID:', socket.id);
