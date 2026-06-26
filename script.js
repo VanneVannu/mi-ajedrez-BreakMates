@@ -260,3 +260,4 @@ socket.on('oponente-reinicio', () => {
 
   alert("El oponente ha reiniciado la partida.");
 });
+
