@@ -12,9 +12,10 @@ const io = new Server(server);
 app.use(express.static(__dirname));
 
 // --- NUEVO: Ruta explícita para entregar el favicon sin bloqueos ---
-app.get('/favicon.png', (req, res) => {
-  res.sendFile(path.join(__dirname, 'favicon.png'));
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'favicon.ico'));
 });
+
 
 // Lógica de conexión en tiempo real
 io.on('connection', (socket) => {
