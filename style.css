@@ -148,14 +148,6 @@ body {
   background-color: #ff007f; /* Casillas claras: FUCSIA NEÓN */
 }
 
-#contenedor-controles {
-  display: flex;
-  flex-direction: column; /* <-- Esto obliga a que se pongan uno abajo del otro */
-  gap: 15px;             /* <-- Esto les da una separación perfecta de 15 píxeles */
-  align-items: flex-start; /* Alinea los textos al inicio izquierdo */
-  padding: 10px;
-}
-
 /* NUEVO: Estilo neón para el selector de bando */
 #selector-bando {
   background-color: #0d0c1d;
@@ -306,4 +298,20 @@ body {
   box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
 }
 
+/* --- TRUCO DE FUERZA BRUTA PARA SEPARAR LOS CONTROLES --- */
+.control-grupo {
+  display: flex !important;
+  flex-direction: column !important;
+  margin-bottom: 25px !important;
+  width: 100% !important;
+  max-width: 250px !important;
+}
+
+#contenedor-controles, 
+div:has(> .control-grupo) {
+  display: flex !important;
+  flex-direction: column !important; 
+  align-items: flex-start !important;
+  gap: 15px !important;
+}
 
