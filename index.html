@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,6 +14,12 @@
   <div id="interfaz">
     <div id="marcador-turno">Turno: <span id="bando-actual">BLANCAS</span></div>
     
+     <!-- NUEVO: Campo para escribir el Apodo -->
+    <div class="control-grupo">
+       <label for="entrada-apodo">TU APODO:</label>
+       <input type="text" id="entrada-apodo" placeholder="Jugador Anónimo" value="Anónimo" maxlength="15" autocomplete="off">
+    </div>
+
     <div>
       <label for="selector-bando" style="font-weight: bold; margin-right: 5px;">Tu Bando:</label>
       <select id="selector-bando">
@@ -24,8 +31,6 @@
 
     <button id="btn-reiniciar">Reiniciar Partida</button>
   </div>
-
-
 
   <div id="zona-juego">
 
