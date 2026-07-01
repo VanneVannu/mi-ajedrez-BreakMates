@@ -265,3 +265,37 @@ body {
 #btn-enviar-chat:hover {
   transform: scale(1.2);
 }
+
+/* NUEVO: Estilo para el input de apodo */
+.control-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.control-grupo label {
+  color: #00f0ff;
+  text-shadow: 0 0 5px #00f0ff;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+#entrada-apodo {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid #5c134f;
+  border-radius: 4px;
+  color: #fff;
+  padding: 8px;
+  font-size: 14px;
+  outline: none;
+  box-shadow: 0 0 5px rgba(92, 19, 79, 0.3);
+}
+
+#entrada-apodo:focus {
+  border-color: #ff007f;
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+}
+
+
