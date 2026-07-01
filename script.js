@@ -5,6 +5,47 @@ let casillaOrigen = null;
 let turnoActual = "blancas";
 let juegoTerminado = false;
 
+
+// --- NUEVO: Capturar elementos del Chat en Vivo ---
+const mensajesChat = document.getElementById('mensajes-chat');
+const entradaMensaje = document.getElementById('entrada-mensaje');
+const btnEnviarChat = document.getElementById('btn-enviar-chat');
+
+// Función local para procesar el envío de un mensaje
+function enviarMensajeTexto() {
+  const texto = entradaMensaje.value.trim();
+  if (texto === "") return;
+
+  // El nombre del remitente dependerá de tu color elegido en el selector
+  const nombreRemitente = bandoAsignado === "blancas" ? "Blancas" : (bandoAsignado === "negras" ? "Negras" : "Espectador");
+
+  const datos = { remitente: nombreRemitente, texto: texto };
+
+  // 1. Mostrar tu propio mensaje de inmediato en tu pantalla (en fucsia)
+  agregarMensajeAlCuadro(datos, "yo");
+
+  // 2. Emitir el mensaje por internet al servidor
+  socket.emit('enviar-mensaje', datos);
+
+  // Limpiar el campo de texto
+  entradaMensaje.value = "";
+}
+
+// Escuchar clics en el botón de la flecha o al presionar "Enter" en el teclado
+btnEnviarChat.addEventListener('click', enviarMensajeTexto);
+entradaMensaje.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') enviarMensajeTexto();
+});
+
+// Función para pintar la burbuja de texto dentro del contenedor
+function agregarMensajeAlCuadro(datos, claseOrigen) {
+  const div = document.createElement('div');
+  div.classList.add('mensaje', claseOrigen);
+  div.innerHTML = `<span class="remitente">[${datos.remitente}]:</span> ${datos.texto}`;
+  mensajesChat.appendChild(div);
+  mensajesChat.scrollTop = mensajesChat.scrollHeight; // Auto-scroll al fondo
+}
+
 // --- NUEVO: Control de bando elegido por el usuario ---
 let bandoAsignado = "espectador"; // Por defecto nadie puede mover hasta elegir bando
 const selectorBando = document.getElementById('selector-bando');
@@ -13,7 +54,6 @@ const selectorBando = document.getElementById('selector-bando');
 selectorBando.addEventListener('change', (e) => {
   bandoAsignado = e.target.value;
 });
-
 
 // Escuchar cuando el jugador cambia su bando en el menú desplegable
 selectorBando.addEventListener('change', (e) => {
@@ -261,3 +301,7 @@ socket.on('oponente-reinicio', () => {
   alert("El oponente ha reiniciado la partida.");
 });
 
+// --- NUEVO: ESCUCHAR MENSAJES REMOTOS DEL OPONENTE ---
+socket.on('recibir-mensaje', (datosRecibidos) => {
+  agregarMensajeAlCuadro(datosRecibidos, "oponente");
+});
