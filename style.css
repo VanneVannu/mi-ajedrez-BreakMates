@@ -298,19 +298,29 @@ body {
   box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
 }
 
-/* --- CONFIGURACIÓN DE LOS CONTROLES EN FILA CON TEXTOS ARRIBA --- */
+/* --- ALINEACIÓN SIMÉTRICA DE LA BARRA SUPERIOR --- */
 .control-grupo {
   display: flex !important;
-  flex-direction: column !important; /* <-- Esto hace que el texto quede sobre el cuadro */
-  align-items: flex-start !important;
+  flex-direction: column !important; /* Texto sobre el cuadro */
+  align-items: flex-start !important; /* Alineación perfecta a la izquierda */
   gap: 5px !important;
 }
 
 #contenedor-controles, 
 div:has(> .control-grupo) {
   display: flex !important;
-  flex-direction: row !important;     /* <-- Mantiene los dos menús uno al lado del otro */
-  align-items: flex-end !important;   /* Alinea los fondos de las cajas perfectamente */
-  gap: 25px !important;               /* Espacio de separación horizontal entre menús */
+  flex-direction: row !important;     /* Cajas una al lado de la otra */
+  align-items: flex-start !important; /* Alinea los textos superiores en una línea recta */
+  gap: 25px !important;               /* Separación limpia entre módulos */
+}
+
+/* Fuerza al texto de bando a heredar el mismo color neón si quedó descolgado */
+.control-grupo label, 
+#contenedor-controles {
+  color: #00f0ff !important;
+  text-shadow: 0 0 5px #00f0ff !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 1px !important;
 }
 
