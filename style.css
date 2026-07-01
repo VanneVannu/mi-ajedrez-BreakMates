@@ -324,3 +324,11 @@ div:has(> .control-grupo) {
   letter-spacing: 1px !important;
 }
 
+/* --- NUEVO: Efecto Espejo para Voltear el Tablero --- */
+.tablero-volteado {
+  transform: rotate(180deg) !important; /* Gira todo el tablero */
+}
+
+.tablero-volteado .casilla {
+  transform: rotate(180deg) !important; /* Gira cada casilla para que las piezas no queden de cabeza */
+}
