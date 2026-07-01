@@ -8,6 +8,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// --- NUEVO: Control global de bandos ocupados en el servidor ---
+let idJugadorBlancas = null;
+let idJugadorNegras = null;
+
+
 // Indicarle al servidor que comparta públicamente nuestros archivos visuales
 app.use(express.static(__dirname));
 
@@ -45,6 +50,45 @@ io.on('connection', (socket) => {
   socket.on('enviar-mensaje', (datosMensaje) => {
     // Reenviar el mensaje de texto a las demás pantallas conectadas
     socket.broadcast.emit('recibir-mensaje', datosMensaje);
+  });
+
+    // --- NUEVO: Cuando un jugador entra, le avisamos qué bandos están ocupados ---
+  socket.emit('actualizar-bandos-ocupados', {
+    blancasOcupado: idJugadorBlancas !== null,
+    negrasOcupado: idJugadorNegras !== null
+  });
+
+  // --- NUEVO: Escuchar cuando alguien reclama un bando ---
+  socket.on('solicitar-bando', (bandoElegido) => {
+    // Liberar bando anterior si este jugador ya tenía uno
+    if (idJugadorBlancas === socket.id) idJugadorBlancas = null;
+    if (idJugadorNegras === socket.id) idJugadorNegras = null;
+
+    // Asignar el nuevo bando si está libre
+    if (bandoElegido === 'blancas' && idJugadorBlancas === null) {
+      idJugadorBlancas = socket.id;
+    } else if (bandoElegido === 'negras' && idJugadorNegras === null) {
+      idJugadorNegras = socket.id;
+    }
+
+    // Avisar a TODOS los conectados para que actualicen sus menús desplegables
+    io.emit('actualizar-bandos-ocupados', {
+      blancasOcupado: idJugadorBlancas !== null,
+      negrasOcupado: idJugadorNegras !== null
+    });
+  });
+
+  // --- NUEVO: Si un jugador se desconecta, liberamos su bando ---
+  socket.on('disconnect', () => {
+    if (idJugadorBlancas === socket.id) idJugadorBlancas = null;
+    if (idJugadorNegras === socket.id) idJugadorNegras = null;
+
+    // Notificar el cambio a las pantallas que queden conectadas
+    socket.broadcast.emit('actualizar-bandos-ocupados', {
+      blancasOcupado: idJugadorBlancas !== null,
+      negrasOcupado: idJugadorNegras !== null
+    });
+    console.log('Un jugador se ha desconectado.', socket.id);
   });
 
 
