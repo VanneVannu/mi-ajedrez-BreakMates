@@ -348,4 +348,16 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     opcionNegras.disabled = false;
     opcionNegras.textContent = "Piezas Negras ⚫";
   }
+  
+  // --- NUEVO: CAPTURAR EL TABLERO Y VOLTEARLO SI ERES NEGRAS ---
+  const elementoTablero = document.getElementById('tablero');
+  
+  if (bandoAsignado === "negras") {
+    // Si eres el jugador de las negras, el tablero se voltea para ti
+    elementoTablero.classList.add('tablero-volteado');
+  } else {
+    // Si eres blancas o espectador, el tablero se mantiene en la orientación normal
+    elementoTablero.classList.remove('tablero-volteado');
+  }
+  
 });
