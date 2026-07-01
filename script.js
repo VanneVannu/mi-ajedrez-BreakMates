@@ -52,8 +52,13 @@ let bandoAsignado = "espectador"; // Por defecto nadie puede mover hasta elegir 
 const selectorBando = document.getElementById('selector-bando');
 
 // Escuchar cuando el jugador cambia su bando en el menú desplegable
+// --- NUEVO: Solicitar bando al servidor en lugar de asignarlo a ciegas ---
 selectorBando.addEventListener('change', (e) => {
-  bandoAsignado = e.target.value;
+  const bandoDeseado = e.target.value;
+  bandoAsignado = bandoDeseado; // Asignación temporal local
+  
+  // Avisamos al servidor inalámbrico qué color queremos ocupar
+  socket.emit('solicitar-bando', bandoDeseado);
 });
 
 // Escuchar cuando el jugador cambia su bando en el menú desplegable
@@ -305,4 +310,42 @@ socket.on('oponente-reinicio', () => {
 // --- NUEVO: ESCUCHAR MENSAJES REMOTOS DEL OPONENTE ---
 socket.on('recibir-mensaje', (datosRecibidos) => {
   agregarMensajeAlCuadro(datosRecibidos, "oponente");
+});
+
+// --- NUEVO: RECEPTOR PARA BLOQUEAR BANDOS YA OCUPADOS POR OTROS ---
+socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
+  const opcionBlancas = selectorBando.querySelector('option[value="blancas"]');
+  const opcionNegras = selectorBando.querySelector('option[value="negras"]');
+
+  // Si las blancas están ocupadas y NO las tengo yo, las deshabilitamos
+  if (estadoBandos.blancasOcupado && bandoAsignado !== "blancas") {
+    opcionBlancas.disabled = true;
+    opcionBlancas.textContent = "Piezas Blancas ⚪ (Ocupado)";
+    
+    // Si yo era espectador y las blancas se ocuparon, me auto-asigno negras si están libres
+    if (bandoAsignado === "espectador" && !estadoBandos.negrasOcupado) {
+      bandoAsignado = "negras";
+      selectorBando.value = "negras";
+      socket.emit('solicitar-bando', "negras");
+    }
+  } else {
+    opcionBlancas.disabled = false;
+    opcionBlancas.textContent = "Piezas Blancas ⚪";
+  }
+
+  // Si las negras están ocupadas y NO las tengo yo, las deshabilitamos
+  if (estadoBandos.negrasOcupado && bandoAsignado !== "negras") {
+    opcionNegras.disabled = true;
+    opcionNegras.textContent = "Piezas Negras ⚫ (Ocupado)";
+    
+    // Si yo era espectador y las negras se ocuparon, me auto-asigno blancas si están libres
+    if (bandoAsignado === "espectador" && !estadoBandos.blancasOcupado) {
+      bandoAsignado = "blancas";
+      selectorBando.value = "blancas";
+      socket.emit('solicitar-bando', "blancas");
+    }
+  } else {
+    opcionNegras.disabled = false;
+    opcionNegras.textContent = "Piezas Negras ⚫";
+  }
 });
