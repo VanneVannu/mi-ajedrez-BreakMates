@@ -41,6 +41,13 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('oponente-reinicio');
   });
 
+    // --- NUEVO: Escuchar mensajes del chat y retransmitirlos ---
+  socket.on('enviar-mensaje', (datosMensaje) => {
+    // Reenviar el mensaje de texto a las demás pantallas conectadas
+    socket.broadcast.emit('recibir-mensaje', datosMensaje);
+  });
+
+
 });
 
 // Arrancar el servidor en el puerto 3000
