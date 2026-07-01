@@ -187,3 +187,81 @@ body {
   border-color: #ff007f;
   box-shadow: 0 0 12px rgba(255, 0, 127, 0.6);
 }
+
+/* NUEVO: Estilos estéticos para el chat Cyberpunk */
+#contenedor-chat {
+  width: 220px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid #5c134f;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  min-height: 460px;
+  box-shadow: 0 0 15px rgba(92, 19, 79, 0.3);
+}
+
+#titulo-chat {
+  background-color: #5c134f;
+  color: #00f0ff;
+  text-shadow: 0 0 5px #00f0ff;
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+#mensajes-chat {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto; /* Permite scroll si hay muchos mensajes */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  max-height: 380px;
+}
+
+/* Burbujas de mensajes */
+.mensaje {
+  color: #fff;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.mensaje .remitente {
+  font-weight: bold;
+}
+
+.mensaje.yo .remitente { color: #ff007f; } /* Tus mensajes salen en fucsia */
+.mensaje.oponente .remitente { color: #00f0ff; } /* Los del rival en cian */
+
+#formulario-chat {
+  display: flex;
+  padding: 5px;
+  border-top: 1px solid rgba(92, 19, 79, 0.5);
+  background-color: #0d0c1d;
+}
+
+#entrada-mensaje {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 6px;
+  font-size: 13px;
+  outline: none;
+}
+
+#btn-enviar-chat {
+  background: transparent;
+  border: none;
+  color: #ff007f;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+#btn-enviar-chat:hover {
+  transform: scale(1.2);
+}
