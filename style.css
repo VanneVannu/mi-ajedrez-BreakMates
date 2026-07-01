@@ -148,6 +148,14 @@ body {
   background-color: #ff007f; /* Casillas claras: FUCSIA NEÓN */
 }
 
+#contenedor-controles {
+  display: flex;
+  flex-direction: column; /* <-- Esto obliga a que se pongan uno abajo del otro */
+  gap: 15px;             /* <-- Esto les da una separación perfecta de 15 píxeles */
+  align-items: flex-start; /* Alinea los textos al inicio izquierdo */
+  padding: 10px;
+}
+
 /* NUEVO: Estilo neón para el selector de bando */
 #selector-bando {
   background-color: #0d0c1d;
