@@ -4,6 +4,7 @@ const sonidoRosa = new Audio('capturar.mp3');
 let casillaOrigen = null;
 let turnoActual = "blancas";
 let juegoTerminado = false;
+const entradaApodo = document.getElementById('entrada-apodo');
 
 
 // --- NUEVO: Capturar elementos del Chat en Vivo ---
@@ -16,18 +17,18 @@ function enviarMensajeTexto() {
   const texto = entradaMensaje.value.trim();
   if (texto === "") return;
 
-  // El nombre del remitente dependerá de tu color elegido en el selector
-  const nombreRemitente = bandoAsignado === "blancas" ? "Blancas" : (bandoAsignado === "negras" ? "Negras" : "Espectador");
+  // NUEVO: Capturar el apodo escrito por el usuario (si está vacío, usa "Anónimo")
+  const apodo = entradaApodo.value.trim() || "Anónimo";
+  const bandoTexto = bandoAsignado === "blancas" ? "⚪" : (bandoAsignado === "negras" ? "⚫" : "👁️");
+
+  // El nombre final unirá su emoji de bando con su nombre elegido (Ejemplo: "[⚪ Carlos]: Hola")
+  const nombreRemitente = `${bandoTexto} ${apodo}`;
 
   const datos = { remitente: nombreRemitente, texto: texto };
 
-  // 1. Mostrar tu propio mensaje de inmediato en tu pantalla (en fucsia)
+  // Mostrar en tu pantalla y enviar al servidor (Esto se queda igual)
   agregarMensajeAlCuadro(datos, "yo");
-
-  // 2. Emitir el mensaje por internet al servidor
   socket.emit('enviar-mensaje', datos);
-
-  // Limpiar el campo de texto
   entradaMensaje.value = "";
 }
 
