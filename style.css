@@ -301,7 +301,7 @@ body {
 /* --- TRUCO DE FUERZA BRUTA PARA SEPARAR LOS CONTROLES --- */
 .control-grupo {
   display: flex !important;
-  flex-direction: column !important;
+  flex-direction: row !important;
   margin-bottom: 25px !important;
   width: 100% !important;
   max-width: 250px !important;
@@ -310,7 +310,7 @@ body {
 #contenedor-controles, 
 div:has(> .control-grupo) {
   display: flex !important;
-  flex-direction: column !important; 
+  flex-direction: row !important; 
   align-items: flex-start !important;
   gap: 15px !important;
 }
