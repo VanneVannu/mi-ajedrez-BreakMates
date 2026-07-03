@@ -26,20 +26,20 @@ let salasOcupadas = {};
 io.on('connection', (socket) => {
   console.log('¡Usuario conectado! ID:', socket.id);
   
-  // Guardamos la sala de forma segura en la propiedad del socket de este jugador
+  // Guardamos el nombre de la sala directamente en una variable interna del socket del jugador
   socket.miSalaActual = null; 
 
   // --- 1. Escuchar cuando un jugador se une a una sala específica ---
   socket.on('unirse-a-sala', (nombreSala) => {
     socket.miSalaActual = nombreSala; 
-    socket.join(nombreSala); // Unirse formalmente a la habitación digital
+    socket.join(nombreSala); // Meter al jugador a la habitación digital oficial
 
     if (!salasOcupadas[nombreSala]) {
       salasOcupadas[nombreSala] = { blancas: null, negras: null };
     }
 
     // Informar de inmediato cómo están los bandos en su sala específica
-    socket.emit('actualizar-bandos-ocupados', {
+    io.to(nombreSala).emit('actualizar-bandos-ocupados', {
       blancasOcupado: salasOcupadas[nombreSala].blancas !== null,
       negrasOcupado: salasOcupadas[nombreSala].negras !== null
     });
@@ -58,38 +58,38 @@ io.on('connection', (socket) => {
     if (sala.blancas === socket.id) sala.blancas = null;
     if (sala.negras === socket.id) sala.negras = null;
 
-    // CORREGIDO: Asignar el nuevo bando limpiamente sin auto-borrarse
+    // Asignar el nuevo bando limpiamente
     if (bandoElegido === 'blancas' && sala.blancas === null) {
       sala.blancas = socket.id;
     } else if (bandoElegido === 'negras' && sala.negras === null) {
       sala.negras = socket.id;
     }
 
-    // Avisar a TODOS los miembros de esta sala en específico
+    // Avisar a TODOS los miembros de esta sala en específico usando io.to
     io.to(salaNombre).emit('actualizar-bandos-ocupados', {
       blancasOcupado: sala.blancas !== null,
       negrasOcupado: sala.negras !== null
     });
   });
 
-  // --- 3. Retransmitir movimientos SOLO a los miembros de la misma sala ---
+  // --- 3. CORREGIDO: Retransmitir movimientos de forma infalible con io.to ---
   socket.on('movimiento-ajedrez', (datosMovimiento) => {
     if (socket.miSalaActual) {
-      socket.to(socket.miSalaActual).emit('oponente-movio', datosMovimiento); //
+      io.to(socket.miSalaActual).emit('oponente-movio', datosMovimiento);
     }
   });
 
-  // --- 4. Retransmitir reinicios SOLO a la misma sala ---
+  // --- 4. CORREGIDO: Retransmitir reinicios de forma infalible con io.to ---
   socket.on('solicitar-reinicio', () => {
     if (socket.miSalaActual) {
-      socket.to(socket.miSalaActual).emit('oponente-reinicio'); //
+      io.to(socket.miSalaActual).emit('oponente-reinicio');
     }
   });
 
-  // --- 5. Retransmitir mensajes del chat SOLO a la misma sala ---
+  // --- 5. CORREGIDO: Retransmitir mensajes del chat de forma infalible con io.to ---
   socket.on('enviar-mensaje', (datosMensaje) => {
     if (socket.miSalaActual) {
-      socket.to(socket.miSalaActual).emit('recibir-mensaje', datosMensaje); //
+      io.to(socket.miSalaActual).emit('recibir-mensaje', datosMensaje);
     }
   });
 
@@ -102,8 +102,8 @@ io.on('connection', (socket) => {
       if (sala.blancas === socket.id) sala.blancas = null;
       if (sala.negras === socket.id) sala.negras = null;
 
-      // Notificar a los que se quedaron en la sala
-      socket.to(salaNombre).emit('actualizar-bandos-ocupados', {
+      // Notificar los cambios a los que se quedaron en la sala
+      io.to(salaNombre).emit('actualizar-bandos-ocupados', {
         blancasOcupado: sala.blancas !== null,
         negrasOcupado: sala.negras !== null
       });
@@ -124,3 +124,4 @@ const PUERTO = 3000;
 server.listen(PUERTO, () => {
   console.log(`Servidor de ajedrez corriendo en http://localhost:${PUERTO}`);
 });
+
