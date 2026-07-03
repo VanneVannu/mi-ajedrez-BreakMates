@@ -376,11 +376,11 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     opcionNegras.textContent = "Piezas Negras ⚫";
   }
 
-  // LÓGICA DEL GIRO AUTOMÁTICO DE CÁMARA
+    // LÓGICA DEL GIRO AUTOMÁTICO DE CÁMARA
   const elementoTablero = document.getElementById('tablero');
   if (bandoAsignado === "negras") {
     elementoTablero.classList.add('tablero-volteado'); 
   } else {
     elementoTablero.classList.remove('tablero-volteado');
   }
-});
+}); // Fin de la antena
