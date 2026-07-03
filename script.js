@@ -35,13 +35,12 @@ entradaSala.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') btnEntrarSala.click();
 });
 
-
 // --- CAPTURAR ELEMENTOS DEL CHAT EN VIVO ---
 const mensajesChat = document.getElementById('mensajes-chat');
 const entradaMensaje = document.getElementById('entrada-mensaje');
 const btnEnviarChat = document.getElementById('btn-enviar-chat');
 
-// Función local para procesar el envío de un mensaje
+// 1. FUNCIÓN PARA ENVIAR EL TEXTO
 function enviarMensajeTexto() {
   const texto = entradaMensaje.value.trim();
   if (texto === "") return;
@@ -56,9 +55,34 @@ function enviarMensajeTexto() {
 
   // Mostrar en tu pantalla de inmediato (en fucsia)
   agregarMensajeAlCuadro(datos, "yo");
+  
+  // ¡MUY IMPORTANTE! Esta línea envía el mensaje por internet al servidor
   socket.emit('enviar-mensaje', datos);
+  
   entradaMensaje.value = "";
-}
+} // <-- AQUÍ TERMINA EMITIR MENSAJE
+
+// Escuchar clics en el botón de la flecha o al presionar "Enter" en el teclado
+btnEnviarChat.addEventListener('click', enviarMensajeTexto);
+entradaMensaje.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') enviarMensajeTexto();
+});
+
+// 2. FUNCIÓN SEPARADA E INDEPENDIENTE PARA PINTAR EN PANTALLA
+function agregarMensajeAlCuadro(datos, claseOrigen) {
+  const div = document.createElement('div');
+  div.classList.add('mensaje', claseOrigen);
+  
+  // Si el mensaje viene con un número de color asignado por el servidor, se lo aplicamos
+  if (datos.numColor !== undefined) {
+    div.classList.add(`msg-neon-${datos.numColor}`);
+  }
+  
+  div.innerHTML = `<span class="remitente">[${datos.remitente}]:</span> ${datos.texto}`;
+  mensajesChat.appendChild(div);
+  mensajesChat.scrollTop = mensajesChat.scrollHeight; // Auto-scroll al fondo
+} // <-- AQUÍ TERMINA PINTAR EN PANTALLA
+
 
 // Escuchar clics en el botón de la flecha o al presionar "Enter" en el teclado
 btnEnviarChat.addEventListener('click', enviarMensajeTexto);
