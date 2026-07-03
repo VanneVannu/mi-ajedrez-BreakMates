@@ -384,5 +384,3 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     elementoTablero.classList.remove('tablero-volteado');
   }
 });
-
-
