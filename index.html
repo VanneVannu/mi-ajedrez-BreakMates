@@ -8,95 +8,102 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
   
-  <!-- NUEVO: Pantalla de Bienvenida / Lobby para crear o unirse a salas -->
-<div id="pantalla-lobby">
-  <div class="caja-lobby">
-    <h1>BREAKMATES</h1>
-    <p>AJEDREZ CYBERPUNK EN TIEMPO REAL</p>
-    
-    <div class="control-grupo-lobby">
-      <label for="entrada-sala">CÓDIGO DE LA SALA:</label>
-      <!-- Modifica solo esta línea en tu index.html si quieres dejar una sala por defecto -->
-      <input type="text" id="entrada-sala" placeholder="Ej: sala-secreta, 402..." value="publica" autocomplete="off">
+  <!-- Pantalla de Bienvenida / Lobby para crear o unirse a salas -->
+  <div id="pantalla-lobby">
+    <div class="caja-lobby">
+      <h1>BREAKMATES</h1>
+      <p>AJEDREZ CYBERPUNK EN TIEMPO REAL</p>
+      
+      <div class="control-grupo-lobby">
+        <label for="entrada-sala">CÓDIGO DE LA SALA:</label>
+        <input type="text" id="entrada-sala" placeholder="Ej: sala-secreta, 402..." value="publica" autocomplete="off">
+      </div>
+      
+      <button id="btn-entrar-sala">ENTRAR A LA SALA ➤</button>
     </div>
-    
-    <button id="btn-entrar-sala">ENTRAR A LA SALA ➤</button>
-  </div>
-</div>
-
-      <!-- ACTUALIZADO: Interfaz de control con selector de bando -->
-  <div id="interfaz">
-    <div id="marcador-turno">Turno: <span id="bando-actual">BLANCAS</span></div>
-    
-     <!-- NUEVO: Campo para escribir el Apodo -->
-    <div class="control-grupo">
-       <label for="entrada-apodo">TU APODO:</label>
-       <input type="text" id="entrada-apodo" placeholder="Jugador Anónimo" value="Anónimo" maxlength="15" autocomplete="off">
-    </div>
-
-    <div>
-      <label for="selector-bando" style="font-weight: bold; margin-right: 5px;">Tu Bando:</label>
-      <select id="selector-bando">
-        <option value="espectador">Espectador</option>
-        <option value="blancas">Blancas (♙)</option>
-        <option value="negras">Negras (♟)</option>
-      </select>
-    </div>
-
-    <button id="btn-reiniciar">Reiniciar Partida</button>
   </div>
 
-  <div id="zona-juego">
+  <!-- CORREGIDO: Todo el juego envuelto en contenedor-principal, inicia oculto para el lobby -->
+  <div id="contenedor-principal" class="oculto">
+    
+    <!-- Interfaz de control superior equilibrada -->
+    <div id="interfaz">
+      <div id="marcador-turno">Turno: <span id="bando-actual">BLANCAS</span></div>
+      
+      <!-- ID unificado como contenedor-controles para respetar tu diseño en style.css -->
+      <div id="contenedor-controles">
+        <!-- Grupo de Apodo -->
+        <div class="control-grupo">
+           <label for="entrada-apodo">TU APODO:</label>
+           <input type="text" id="entrada-apodo" placeholder="Jugador Anónimo" value="Anónimo" maxlength="15" autocomplete="off">
+        </div>
 
-    <!-- Lado izquierdo: Piezas blancas capturadas -->
-    <div class="cementerio" id="capturadas-blancas"></div>
-
-    <!-- Contenedor relativo para poder encimar el letrero -->
-    <div id="contenedor-tablero">
-      <div id="tablero">
-        <!-- Fila 0 (Negras) -->
-        <div class="casilla" data-fila="0" data-col="0">♜</div><div class="casilla" data-fila="0" data-col="1">♞</div><div class="casilla" data-fila="0" data-col="2">♝</div><div class="casilla" data-fila="0" data-col="3">♛</div>
-        <div class="casilla" data-fila="0" data-col="4">♚</div><div class="casilla" data-fila="0" data-col="5">♝</div><div class="casilla" data-fila="0" data-col="6">♞</div><div class="casilla" data-fila="0" data-col="7">♜</div>
-        <!-- Fila 1 (Peones Negros) -->
-        <div class="casilla" data-fila="1" data-col="0">♟</div><div class="casilla" data-fila="1" data-col="1">♟</div><div class="casilla" data-fila="1" data-col="2">♟</div><div class="casilla" data-fila="1" data-col="3">♟</div>
-        <div class="casilla" data-fila="1" data-col="4">♟</div><div class="casilla" data-fila="1" data-col="5">♟</div><div class="casilla" data-fila="1" data-col="6">♟</div><div class="casilla" data-fila="1" data-col="7">♟</div>
-        
-        <!-- Filas vacías -->
-        <div class="casilla" data-fila="2" data-col="0"></div><div class="casilla" data-fila="2" data-col="1"></div><div class="casilla" data-fila="2" data-col="2"></div><div class="casilla" data-fila="2" data-col="3"></div><div class="casilla" data-fila="2" data-col="4"></div><div class="casilla" data-fila="2" data-col="5"></div><div class="casilla" data-fila="2" data-col="6"></div><div class="casilla" data-fila="2" data-col="7"></div>
-        <div class="casilla" data-fila="3" data-col="0"></div><div class="casilla" data-fila="3" data-col="1"></div><div class="casilla" data-fila="3" data-col="2"></div><div class="casilla" data-fila="3" data-col="3"></div><div class="casilla" data-fila="3" data-col="4"></div><div class="casilla" data-fila="3" data-col="5"></div><div class="casilla" data-fila="3" data-col="6"></div><div class="casilla" data-fila="3" data-col="7"></div>
-        <div class="casilla" data-fila="4" data-col="0"></div><div class="casilla" data-fila="4" data-col="1"></div><div class="casilla" data-fila="4" data-col="2"></div><div class="casilla" data-fila="4" data-col="3"></div><div class="casilla" data-fila="4" data-col="4"></div><div class="casilla" data-fila="4" data-col="5"></div><div class="casilla" data-fila="4" data-col="6"></div><div class="casilla" data-fila="4" data-col="7"></div>
-        <div class="casilla" data-fila="5" data-col="0"></div><div class="casilla" data-fila="5" data-col="1"></div><div class="casilla" data-fila="5" data-col="2"></div><div class="casilla" data-fila="5" data-col="3"></div><div class="casilla" data-fila="5" data-col="4"></div><div class="casilla" data-fila="5" data-col="5"></div><div class="casilla" data-fila="5" data-col="6"></div><div class="casilla" data-fila="5" data-col="7"></div>
-
-        <!-- Fila 6 (Peones Blancos) -->
-        <div class="casilla" data-fila="6" data-col="0">♙</div><div class="casilla" data-fila="6" data-col="1">♙</div><div class="casilla" data-fila="6" data-col="2">♙</div><div class="casilla" data-fila="6" data-col="3">♙</div>
-        <div class="casilla" data-fila="6" data-col="4">♙</div><div class="casilla" data-fila="6" data-col="5">♙</div><div class="casilla" data-fila="6" data-col="6">♙</div><div class="casilla" data-fila="6" data-col="7">♙</div>
-        <!-- Fila 7 (Blancas) -->
-        <div class="casilla" data-fila="7" data-col="0">♖</div><div class="casilla" data-fila="7" data-col="1">♘</div><div class="casilla" data-fila="7" data-col="2">♗</div><div class="casilla" data-fila="7" data-col="3">♕</div>
-        <div class="casilla" data-fila="7" data-col="4">♔</div><div class="casilla" data-fila="7" data-col="5">♗</div><div class="casilla" data-fila="7" data-col="6">♘</div><div class="casilla" data-fila="7" data-col="7">♖</div>
+        <!-- Grupo de Bando corregido para que el texto quede sobre el cuadro -->
+        <div class="control-grupo">
+          <label for="selector-bando">TU BANDO:</label>
+          <select id="selector-bando">
+            <option value="espectador">Espectador 👁️</option>
+            <option value="blancas">Blancas (♙)</option>
+            <option value="negras">Negras (♟)</option>
+          </select>
+        </div>
       </div>
 
-      <!-- NUEVO: Letrero flotante de Jaque Mate oculto por defecto -->
-      <div id="pantalla-victoria" class="oculto">
-        <h2>¡JAQUE MATE!</h2>
-        <p id="mensaje-ganador">Ganaron las blancas</p>
+      <button id="btn-reiniciar">Reiniciar Partida</button>
+    </div>
+
+    <div id="zona-juego">
+      <!-- Lado izquierdo: Piezas blancas capturadas -->
+      <div class="cementerio" id="capturadas-blancas"></div>
+
+      <!-- Contenedor relativo para poder encimar el letrero -->
+      <div id="contenedor-tablero">
+        <div id="tablero">
+          <!-- Fila 0 (Negras) -->
+          <div class="casilla" data-fila="0" data-col="0">♜</div><div class="casilla" data-fila="0" data-col="1">♞</div><div class="casilla" data-fila="0" data-col="2">♝</div><div class="casilla" data-fila="0" data-col="3">♛</div>
+          <div class="casilla" data-fila="0" data-col="4">♚</div><div class="casilla" data-fila="0" data-col="5">♝</div><div class="casilla" data-fila="0" data-col="6">♞</div><div class="casilla" data-fila="0" data-col="7">♜</div>
+          <!-- Fila 1 (Peones Negros) -->
+          <div class="casilla" data-fila="1" data-col="0">♟</div><div class="casilla" data-fila="1" data-col="1">♟</div><div class="casilla" data-fila="1" data-col="2">♟</div><div class="casilla" data-fila="1" data-col="3">♟</div>
+          <div class="casilla" data-fila="1" data-col="4">♟</div><div class="casilla" data-fila="1" data-col="5">♟</div><div class="casilla" data-fila="1" data-col="6">♟</div><div class="casilla" data-fila="1" data-col="7">♟</div>
+          
+          <!-- Filas vacías -->
+          <div class="casilla" data-fila="2" data-col="0"></div><div class="casilla" data-fila="2" data-col="1"></div><div class="casilla" data-fila="2" data-col="2"></div><div class="casilla" data-fila="2" data-col="3"></div><div class="casilla" data-fila="2" data-col="4"></div><div class="casilla" data-fila="2" data-col="5"></div><div class="casilla" data-fila="2" data-col="6"></div><div class="casilla" data-fila="2" data-col="7"></div>
+          <div class="casilla" data-fila="3" data-col="0"></div><div class="casilla" data-fila="3" data-col="1"></div><div class="casilla" data-fila="3" data-col="2"></div><div class="casilla" data-fila="3" data-col="3"></div><div class="casilla" data-fila="3" data-col="4"></div><div class="casilla" data-fila="3" data-col="5"></div><div class="casilla" data-fila="3" data-col="6"></div><div class="casilla" data-fila="3" data-col="7"></div>
+          <div class="casilla" data-fila="4" data-col="0"></div><div class="casilla" data-fila="4" data-col="1"></div><div class="casilla" data-fila="4" data-col="2"></div><div class="casilla" data-fila="4" data-col="3"></div><div class="casilla" data-fila="4" data-col="4"></div><div class="casilla" data-fila="4" data-col="5"></div><div class="casilla" data-fila="4" data-col="6"></div><div class="casilla" data-fila="4" data-col="7"></div>
+          <div class="casilla" data-fila="5" data-col="0"></div><div class="casilla" data-fila="5" data-col="1"></div><div class="casilla" data-fila="5" data-col="2"></div><div class="casilla" data-fila="5" data-col="3"></div><div class="casilla" data-fila="5" data-col="4"></div><div class="casilla" data-fila="5" data-col="5"></div><div class="casilla" data-fila="5" data-col="6"></div><div class="casilla" data-fila="5" data-col="7"></div>
+
+          <!-- Fila 6 (Peones Blancos) -->
+          <div class="casilla" data-fila="6" data-col="0">♙</div><div class="casilla" data-fila="6" data-col="1">♙</div><div class="casilla" data-fila="6" data-col="2">♙</div><div class="casilla" data-fila="6" data-col="3">♙</div>
+          <div class="casilla" data-fila="6" data-col="4">♙</div><div class="casilla" data-fila="6" data-col="5">♙</div><div class="casilla" data-fila="6" data-col="6">♙</div><div class="casilla" data-fila="6" data-col="7">♙</div>
+          <!-- Fila 7 (Blancas) -->
+          <div class="casilla" data-fila="7" data-col="0">♖</div><div class="casilla" data-fila="7" data-col="1">♘</div><div class="casilla" data-fila="7" data-col="2">♗</div><div class="casilla" data-fila="7" data-col="3">♕</div>
+          <div class="casilla" data-fila="7" data-col="4">♔</div><div class="casilla" data-fila="7" data-col="5">♗</div><div class="casilla" data-fila="7" data-col="6">♘</div><div class="casilla" data-fila="7" data-col="7">♖</div>
+        </div>
+
+        <!-- Letrero flotante de Jaque Mate oculto por defecto -->
+        <div id="pantalla-victoria" class="oculto">
+          <h2>¡JAQUE MATE!</h2>
+          <p id="mensaje-ganador">Ganaron las blancas</p>
+        </div>
+      </div>
+
+      <!-- Lado derecho: Piezas negras capturadas -->
+      <div class="cementerio" id="capturadas-negras"></div>
+
+      <!-- Chat en vivo -->
+      <div id="contenedor-chat">
+        <div id="titulo-chat">CHAT EN VIVO</div>
+        <div id="mensajes-chat"></div>
+        <div id="formulario-chat">
+          <input type="text" id="entrada-mensaje" placeholder="Escribe un mensaje..." autocomplete="off">
+          <button id="btn-enviar-chat">➤</button>
+        </div>
       </div>
     </div>
 
-    <!-- Lado derecho: Piezas negras capturadas -->
-    <div class="cementerio" id="capturadas-negras"></div>
-
-     <div id="contenedor-chat">
-      <div id="titulo-chat">CHAT EN VIVO</div>
-      <div id="mensajes-chat"></div>
-      <div id="formulario-chat">
-        <input type="text" id="entrada-mensaje" placeholder="Escribe un mensaje..." autocomplete="off">
-        <button id="btn-enviar-chat">➤</button>
-      </div>
-    </div>
-  </div>
+  </div> <!-- FIN DEL CONTENEDOR PRINCIPAL -->
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
