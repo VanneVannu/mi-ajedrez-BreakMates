@@ -364,8 +364,7 @@ body {
 
 #btn-entrar-sala:hover { transform: scale(1.03); }
 
-/* Clase genérica para ocultar elementos */
-.oculto { display: none !important; }
+
 
 /*-------------------------------------------------------*/
 /*Bloque donde se obliga a alinear-----------------------*/
@@ -423,6 +422,18 @@ body {
   transform: rotate(180deg) !important; /* Fuerza a cada casilla a mantenerse al derecho */
 }
 
+
+/* Clase genérica para ocultar elementos */
+.oculto { display: none !important; }
+
+
+/* --- PALETA DE COLORES NEÓN DINÁMICOS PARA ESPECTADORES --- */
+.msg-neon-0 .remitente { color: #00f0ff !important; text-shadow: 0 0 5px #00f0ff; } /* Cian */
+.msg-neon-1 .remitente { color: #39ff14 !important; text-shadow: 0 0 5px #39ff14; } /* Verde Neón */
+.msg-neon-2 .remitente { color: #ffff00 !important; text-shadow: 0 0 5px #ffff00; } /* Amarillo Neón */
+.msg-neon-3 .remitente { color: #ff9900 !important; text-shadow: 0 0 5px #ff9900; } /* Naranja Neón */
+.msg-neon-4 .remitente { color: #cc00ff !important; text-shadow: 0 0 5px #cc00ff; } /* Morado Neón */
+.msg-neon-5 .remitente { color: #00ffcc !important; text-shadow: 0 0 5px #00ffcc; } /* Menta Neón */
+
+
 /*-------------------------------------------------------*/
-
-
