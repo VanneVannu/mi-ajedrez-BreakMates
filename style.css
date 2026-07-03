@@ -299,40 +299,6 @@ body {
   box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
 }
 
-/* --- ALINEACIÓN SIMÉTRICA DE LA BARRA SUPERIOR --- */
-.control-grupo {
-  display: flex !important;
-  flex-direction: column !important; /* Texto sobre el cuadro */
-  align-items: flex-start !important; /* Alineación perfecta a la izquierda */
-  gap: 5px !important;
-}
-
-#contenedor-controles, 
-div:has(> .control-grupo) {
-  display: flex !important;
-  flex-direction: row !important;     /* Cajas una al lado de la otra */
-  align-items: flex-start !important; /* Alinea los textos superiores en una línea recta */
-  gap: 25px !important;               /* Separación limpia entre módulos */
-}
-
-/* Fuerza al texto de bando a heredar el mismo color neón si quedó descolgado */
-.control-grupo label, 
-#contenedor-controles {
-  color: #00f0ff !important;
-  text-shadow: 0 0 5px #00f0ff !important;
-  font-size: 12px !important;
-  font-weight: bold !important;
-  letter-spacing: 1px !important;
-}
-
-/* --- NUEVO: Efecto Espejo para Voltear el Tablero --- */
-.tablero-volteado {
-  transform: rotate(180deg) !important; /* Gira todo el tablero */
-}
-
-.tablero-volteado .casilla {
-  transform: rotate(180deg) !important; /* Gira cada casilla para que las piezas no queden de cabeza */
-}
 
 /* NUEVO: Estilos para el Lobby de Salas */
 #pantalla-lobby {
@@ -400,4 +366,54 @@ div:has(> .control-grupo) {
 
 /* Clase genérica para ocultar elementos */
 .oculto { display: none !important; }
+
+/*-------------------------------------------------------*/
+/*Bloque donde se obliga a alinear-----------------------*/
+
+/* --- ALINEACIÓN SIMÉTRICA DE LA BARRA SUPERIOR DEFINTIVA --- */
+#interfaz {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important; /* Nivela el Turno, las cajas y el Botón por su base */
+  justify-content: center !important; /* Centra toda la barra en la pantalla */
+  gap: 30px !important; /* Espaciado elegante entre cada sección principal */
+  padding: 15px 0 !important;
+}
+
+#contenedor-controles {
+  display: flex !important;
+  flex-direction: row !important; /* Mantiene Apodo y Bando uno al lado del otro */
+  align-items: flex-end !important; /* Alinea los inputs por su base */
+  gap: 25px !important; /* Separación horizontal entre Apodo y Bando */
+}
+
+.control-grupo {
+  display: flex !important;
+  flex-direction: column !important; /* Mantiene la etiqueta sobre el cuadro de texto */
+  align-items: flex-start !important;
+  gap: 6px !important;
+}
+
+/* Forzar la estética neón en todas las etiquetas de la barra */
+#marcador-turno,
+.control-grupo label {
+  color: #00f0ff !important;
+  text-shadow: 0 0 5px #00f0ff !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  letter-spacing: 1px !important;
+  margin-bottom: 0 !important; /* Evita desajustes por márgenes viejos */
+}
+
+/* Nivelar el tamaño del botón para que calce perfecto con los inputs */
+#btn-reiniciar {
+  margin-top: 0 !important;
+  height: 38px !important; /* Ajusta la altura para que sea idéntica a las cajas */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/*-------------------------------------------------------*/
+
 
