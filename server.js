@@ -29,16 +29,16 @@ io.on('connection', (socket) => {
   // Guardamos la sala de forma segura en la propiedad del socket de este jugador
   socket.miSalaActual = null; 
 
-  // --- Escuchar cuando un jugador se une a una sala específica ---
+  // --- 1. Escuchar cuando un jugador se une a una sala específica ---
   socket.on('unirse-a-sala', (nombreSala) => {
-    socket.miSalaActual = nombreSala; // Guardado seguro
-    socket.join(nombreSala);
+    socket.miSalaActual = nombreSala; 
+    socket.join(nombreSala); // Unirse formalmente a la habitación digital
 
     if (!salasOcupadas[nombreSala]) {
       salasOcupadas[nombreSala] = { blancas: null, negras: null };
     }
 
-    // Avisar bando ocupados EN SU SALA
+    // Informar de inmediato cómo están los bandos en su sala específica
     socket.emit('actualizar-bandos-ocupados', {
       blancasOcupado: salasOcupadas[nombreSala].blancas !== null,
       negrasOcupado: salasOcupadas[nombreSala].negras !== null
@@ -47,51 +47,53 @@ io.on('connection', (socket) => {
     console.log(`Usuario ${socket.id} entró con éxito a la sala: ${nombreSala}`);
   });
 
-  // --- Escuchar cuando alguien reclama un bando dentro de su sala ---
+  // --- 2. Escuchar cuando alguien reclama un bando dentro de su sala ---
   socket.on('solicitar-bando', (bandoElegido) => {
     const salaNombre = socket.miSalaActual;
     if (!salaNombre || !salasOcupadas[salaNombre]) return;
 
     let sala = salasOcupadas[salaNombre];
 
+    // Liberar bando anterior en esta sala si este jugador ya tenía uno
     if (sala.blancas === socket.id) sala.blancas = null;
     if (sala.negras === socket.id) sala.negras = null;
 
+    // CORREGIDO: Asignar el nuevo bando limpiamente sin auto-borrarse
     if (bandoElegido === 'blancas' && sala.blancas === null) {
       sala.blancas = socket.id;
     } else if (bandoElegido === 'negras' && sala.negras === null) {
       sala.negras = socket.id;
     }
 
-    // Avisar ÚNICAMENTE a los miembros de la sala usando io.to()
+    // Avisar a TODOS los miembros de esta sala en específico
     io.to(salaNombre).emit('actualizar-bandos-ocupados', {
       blancasOcupado: sala.blancas !== null,
       negrasOcupado: sala.negras !== null
     });
   });
 
-  // --- Retransmitir movimientos SOLO a los miembros de la misma sala ---
+  // --- 3. Retransmitir movimientos SOLO a los miembros de la misma sala ---
   socket.on('movimiento-ajedrez', (datosMovimiento) => {
     if (socket.miSalaActual) {
-      socket.to(socket.miSalaActual).emit('oponente-movio', datosMovimiento);
+      socket.to(socket.miSalaActual).emit('oponente-movio', datosMovimiento); //
     }
   });
 
-  // --- Retransmitir reinicios SOLO a la misma sala ---
+  // --- 4. Retransmitir reinicios SOLO a la misma sala ---
   socket.on('solicitar-reinicio', () => {
     if (socket.miSalaActual) {
-      socket.to(socket.miSalaActual).emit('oponente-reinicio');
+      socket.to(socket.miSalaActual).emit('oponente-reinicio'); //
     }
   });
 
-  // --- Retransmitir mensajes del chat SOLO a la misma sala ---
+  // --- 5. Retransmitir mensajes del chat SOLO a la misma sala ---
   socket.on('enviar-mensaje', (datosMensaje) => {
     if (socket.miSalaActual) {
-      socket.to(socket.miSalaActual).emit('recibir-mensaje', datosMensaje);
+      socket.to(socket.miSalaActual).emit('recibir-mensaje', datosMensaje); //
     }
   });
 
-  // --- Si se desconecta, liberamos su bando de su sala específica ---
+  // --- 6. Si se desconecta, liberamos su bando de su sala específica ---
   socket.on('disconnect', () => {
     const salaNombre = socket.miSalaActual;
     
@@ -100,11 +102,13 @@ io.on('connection', (socket) => {
       if (sala.blancas === socket.id) sala.blancas = null;
       if (sala.negras === socket.id) sala.negras = null;
 
+      // Notificar a los que se quedaron en la sala
       socket.to(salaNombre).emit('actualizar-bandos-ocupados', {
         blancasOcupado: sala.blancas !== null,
         negrasOcupado: sala.negras !== null
       });
 
+      // Si la sala quedó completamente vacía, la borramos para ahorrar memoria
       const clientesEnSala = io.sockets.adapter.rooms.get(salaNombre);
       if (!clientesEnSala || clientesEnSala.size === 0) {
         delete salasOcupadas[salaNombre];
@@ -113,7 +117,6 @@ io.on('connection', (socket) => {
     console.log('Un jugador se ha desconectado.', socket.id);
   });
 });
-
 
 
 // Arrancar el servidor en el puerto 3000
