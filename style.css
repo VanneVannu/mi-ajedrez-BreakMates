@@ -414,6 +414,15 @@ body {
   justify-content: center !important;
 }
 
+/* --- ROTACIÓN INDESTRUCTIBLE DEL TABLERO --- */
+.tablero-volteado {
+  transform: rotate(180deg) !important; /* Fuerza el giro del tablero completo */
+}
+
+.tablero-volteado .casilla {
+  transform: rotate(180deg) !important; /* Fuerza a cada casilla a mantenerse al derecho */
+}
+
 /*-------------------------------------------------------*/
 
 
