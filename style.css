@@ -274,6 +274,7 @@ body {
   margin-bottom: 22px; /* <-- Aumentamos el espacio aquí */
 }
 
+
 .control-grupo label {
   color: #00f0ff;
   text-shadow: 0 0 5px #00f0ff;
@@ -332,3 +333,71 @@ div:has(> .control-grupo) {
 .tablero-volteado .casilla {
   transform: rotate(180deg) !important; /* Gira cada casilla para que las piezas no queden de cabeza */
 }
+
+/* NUEVO: Estilos para el Lobby de Salas */
+#pantalla-lobby {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: #0d0c1d;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 9999; /* Asegura que tape todo al inicio */
+}
+
+.caja-lobby {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 2px solid #ff007f;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(255, 0, 127, 0.4);
+  max-width: 400px; width: 90%;
+}
+
+.caja-lobby h1 {
+  color: #00f0ff;
+  text-shadow: 0 0 10px #00f0ff;
+  margin-bottom: 5px;
+  font-size: 32px;
+  letter-spacing: 2px;
+}
+
+.caja-lobby p {
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
+  opacity: 0.7;
+}
+
+.control-grupo-lobby {
+  display: flex; flex-direction: column;
+  gap: 8px; margin-bottom: 25px; text-align: left;
+}
+
+.control-grupo-lobby label {
+  color: #00f0ff; font-size: 12px; font-weight: bold;
+}
+
+#entrada-sala {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid #5c134f; border-radius: 4px;
+  color: #fff; padding: 12px; font-size: 16px; outline: none;
+}
+
+#entrada-sala:focus {
+  border-color: #ff007f; box-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
+}
+
+#btn-entrar-sala {
+  background-color: #ff007f; color: #fff;
+  border: none; border-radius: 4px; padding: 12px 25px;
+  font-size: 14px; font-weight: bold; cursor: pointer;
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+  width: 100%; transition: transform 0.2s;
+}
+
+#btn-entrar-sala:hover { transform: scale(1.03); }
+
+/* Clase genérica para ocultar elementos */
+.oculto { display: none !important; }
+
