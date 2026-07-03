@@ -6,6 +6,33 @@ let turnoActual = "blancas";
 let juegoTerminado = false;
 const entradaApodo = document.getElementById('entrada-apodo');
 
+// --- NUEVO: Control lógico de Entrada a Salas (Lobby) ---
+const pantallaLobby = document.getElementById('pantalla-lobby');
+const contenedorPrincipal = document.getElementById('contenedor-principal');
+const entradaSala = document.getElementById('entrada-sala');
+const btnEntrarSala = document.getElementById('btn-entrar-sala');
+
+btnEntrarSala.addEventListener('click', () => {
+  const nombreSala = entradaSala.value.trim().toLowerCase();
+  
+  if (nombreSala === "") {
+    alert("Por favor, escribe un código para la sala.");
+    return;
+  }
+
+  // 1. Ocultar la pantalla del lobby y mostrar el juego completo
+  pantallaLobby.classList.add('oculto');
+  contenedorPrincipal.classList.remove('oculto');
+
+  // 2. Conectarse formalmente a la habitación digital en el servidor
+  socket.emit('unirse-a-sala', nombreSala);
+});
+
+// Permitir entrar a la sala presionando también Enter en el teclado
+entradaSala.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') btnEntrarSala.click();
+});
+
 
 // --- NUEVO: Capturar elementos del Chat en Vivo ---
 const mensajesChat = document.getElementById('mensajes-chat');
@@ -348,8 +375,8 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     opcionNegras.disabled = false;
     opcionNegras.textContent = "Piezas Negras ⚫";
   }
-  
-  // --- NUEVO: CAPTURAR EL TABLERO Y VOLTEARLO SI ERES NEGRAS ---
+
+   // --- NUEVO: CAPTURAR EL TABLERO Y VOLTEARLO SI ERES NEGRAS ---
   const elementoTablero = document.getElementById('tablero');
   
   if (bandoAsignado === "negras") {
@@ -361,3 +388,4 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
   }
   
 });
+
