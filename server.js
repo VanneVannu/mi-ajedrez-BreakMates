@@ -91,11 +91,15 @@ io.on('connection', (socket) => {
   });
 
   // --- 5. Retransmitir mensajes del chat con io.to ---
+   
   socket.on('enviar-mensaje', (datosMensaje) => {
     if (socket.miSalaActual) {
+      // Le pegamos al objeto el número de color que tiene este socket guardado
+      datosMensaje.numColor = socket.miNumeroColor;
       io.to(socket.miSalaActual).emit('recibir-mensaje', datosMensaje);
     }
   });
+
 
   // --- 6. Si se desconecta, liberamos su bando de su sala específica ---
   socket.on('disconnect', () => {
