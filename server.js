@@ -8,25 +8,21 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-
 // Indicarle al servidor que comparta públicamente nuestros archivos visuales
 app.use(express.static(__dirname));
 
-// --- NUEVO: Ruta explícita para entregar el favicon sin bloqueos ---
+// --- Ruta explícita para entregar el favicon sin bloqueos ---
 app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, 'favicon.ico'));
 });
 
-
-// Lógica de conexión en tiempo real
-// --- NUEVO: Control global estructurado por Salas ---
-// Guardará la información de cada sala de esta forma: { 'sala1': { blancas: id, negras: id } }
+// --- Control global estructurado por Salas ---
 let salasOcupadas = {}; 
 
 io.on('connection', (socket) => {
   console.log('¡Usuario conectado! ID:', socket.id);
   
-  // Guardamos el nombre de la sala directamente en una variable interna del socket del jugador
+  // Guardamos el nombre de la sala de forma segura en la sesión del socket
   socket.miSalaActual = null; 
 
   // --- 1. Escuchar cuando un jugador se une a una sala específica ---
@@ -38,8 +34,9 @@ io.on('connection', (socket) => {
       salasOcupadas[nombreSala] = { blancas: null, negras: null };
     }
 
-    // Informar de inmediato cómo están los bandos en su sala específica
-    io.to(nombreSala).emit('actualizar-bandos-ocupados', {
+    // CORRECCIÓN CLAVE: Responder ÚNICAMENTE al jugador que entra (socket.emit)
+    // Esto evita que las pantallas se confundan entre sí al iniciar la sala
+    socket.emit('actualizar-bandos-ocupados', {
       blancasOcupado: salasOcupadas[nombreSala].blancas !== null,
       negrasOcupado: salasOcupadas[nombreSala].negras !== null
     });
@@ -72,21 +69,21 @@ io.on('connection', (socket) => {
     });
   });
 
-  // --- 3. CORREGIDO: Retransmitir movimientos de forma infalible con io.to ---
+  // --- 3. Retransmitir movimientos con io.to ---
   socket.on('movimiento-ajedrez', (datosMovimiento) => {
     if (socket.miSalaActual) {
       io.to(socket.miSalaActual).emit('oponente-movio', datosMovimiento);
     }
   });
 
-  // --- 4. CORREGIDO: Retransmitir reinicios de forma infalible con io.to ---
+  // --- 4. Retransmitir reinicios con io.to ---
   socket.on('solicitar-reinicio', () => {
     if (socket.miSalaActual) {
       io.to(socket.miSalaActual).emit('oponente-reinicio');
     }
   });
 
-  // --- 5. CORREGIDO: Retransmitir mensajes del chat de forma infalible con io.to ---
+  // --- 5. Retransmitir mensajes del chat con io.to ---
   socket.on('enviar-mensaje', (datosMensaje) => {
     if (socket.miSalaActual) {
       io.to(socket.miSalaActual).emit('recibir-mensaje', datosMensaje);
@@ -108,9 +105,9 @@ io.on('connection', (socket) => {
         negrasOcupado: sala.negras !== null
       });
 
-      // Si la sala quedó completamente vacía, la borramos para ahorrar memoria
-      const clientesEnSala = io.sockets.adapter.rooms.get(salaNombre);
-      if (!clientesEnSala || clientesEnSala.size === 0) {
+      // Limpieza segura de salas vacías
+      const room = io.sockets.adapter.rooms.get(salaNombre);
+      if (!room || room.size === 0) {
         delete salasOcupadas[salaNombre];
       }
     }
@@ -118,10 +115,8 @@ io.on('connection', (socket) => {
   });
 });
 
-
 // Arrancar el servidor en el puerto 3000
 const PUERTO = 3000;
 server.listen(PUERTO, () => {
   console.log(`Servidor de ajedrez corriendo en http://localhost:${PUERTO}`);
 });
-
