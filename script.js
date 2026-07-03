@@ -1,3 +1,5 @@
+// PARTE 1 DE 3: Variables, Lobby y Configuración del Chat
+
 const socket = io();
 const sonidoMover = new Audio('mover.mp3');
 const sonidoRosa = new Audio('capturar.mp3'); 
@@ -6,7 +8,7 @@ let turnoActual = "blancas";
 let juegoTerminado = false;
 const entradaApodo = document.getElementById('entrada-apodo');
 
-// --- NUEVO: Control lógico de Entrada a Salas (Lobby) ---
+// --- CONTROL LÓGICO DE ENTRADA A SALAS (LOBBY) ---
 const pantallaLobby = document.getElementById('pantalla-lobby');
 const contenedorPrincipal = document.getElementById('contenedor-principal');
 const entradaSala = document.getElementById('entrada-sala');
@@ -34,7 +36,7 @@ entradaSala.addEventListener('keypress', (e) => {
 });
 
 
-// --- NUEVO: Capturar elementos del Chat en Vivo ---
+// --- CAPTURAR ELEMENTOS DEL CHAT EN VIVO ---
 const mensajesChat = document.getElementById('mensajes-chat');
 const entradaMensaje = document.getElementById('entrada-mensaje');
 const btnEnviarChat = document.getElementById('btn-enviar-chat');
@@ -44,16 +46,15 @@ function enviarMensajeTexto() {
   const texto = entradaMensaje.value.trim();
   if (texto === "") return;
 
-  // NUEVO: Capturar el apodo escrito por el usuario (si está vacío, usa "Anónimo")
+  // Capturar el apodo escrito por el usuario (si está vacío, usa "Anónimo")
   const apodo = entradaApodo.value.trim() || "Anónimo";
   const bandoTexto = bandoAsignado === "blancas" ? "⚪" : (bandoAsignado === "negras" ? "⚫" : "👁️");
 
-  // El nombre final unirá su emoji de bando con su nombre elegido (Ejemplo: "[⚪ Carlos]: Hola")
+  // El nombre final unirá su emoji de bando con su nombre elegido
   const nombreRemitente = `${bandoTexto} ${apodo}`;
-
   const datos = { remitente: nombreRemitente, texto: texto };
 
-  // Mostrar en tu pantalla y enviar al servidor (Esto se queda igual)
+  // Mostrar en tu pantalla de inmediato (en fucsia)
   agregarMensajeAlCuadro(datos, "yo");
   socket.emit('enviar-mensaje', datos);
   entradaMensaje.value = "";
@@ -74,24 +75,18 @@ function agregarMensajeAlCuadro(datos, claseOrigen) {
   mensajesChat.scrollTop = mensajesChat.scrollHeight; // Auto-scroll al fondo
 }
 
-// --- NUEVO: Control de bando elegido por el usuario ---
-let bandoAsignado = "espectador"; // Por defecto nadie puede mover hasta elegir bando
+// --- CONTROL DE BANDO ELEGIDO POR EL USUARIO ---
+let bandoAsignado = "espectador"; 
 const selectorBando = document.getElementById('selector-bando');
 
-// Escuchar cuando el jugador cambia su bando en el menú desplegable
-// --- NUEVO: Solicitar bando al servidor en lugar de asignarlo a ciegas ---
+// Avisar al servidor inalámbrico limpiamente (se eliminó el duplicado conflictivo)
 selectorBando.addEventListener('change', (e) => {
   const bandoDeseado = e.target.value;
-  bandoAsignado = bandoDeseado; // Asignación temporal local
-  
-  // Avisamos al servidor inalámbrico qué color queremos ocupar
+  bandoAsignado = bandoDeseado; 
   socket.emit('solicitar-bando', bandoDeseado);
 });
 
-// Escuchar cuando el jugador cambia su bando en el menú desplegable
-selectorBando.addEventListener('change', (e) => {
-  bandoAsignado = e.target.value;
-});
+//PARTE 2 DE 3: Reglas del Ajedrez y Estado Inicial
 
 const piezasBlancas = ["♙", "♖", "♘", "♗", "♕", "♔"];
 const piezasNegras  = ["♟", "♜", "♞", "♝", "♛", "♚"];
@@ -128,13 +123,10 @@ btnReiniciar.addEventListener('click', () => {
   cementerioNegras.innerHTML = "";
   pantallaVictoria.classList.add('oculto');
 
-   // --- AQUÍ SE AGREGAN LAS DOS LÍNEAS NUEVAS ---
   selectorBando.value = "espectador"; 
   bandoAsignado = "espectador";
 
-    // Avisar al servidor (esta línea ya existía)
   socket.emit('solicitar-reinicio');
-
 });
 
 function validarMovimientoPeon(fOrigen, cOrigen, fDestino, cDestino, pieza, esCasillaVacia) {
@@ -152,6 +144,7 @@ function validarMovimientoPeon(fOrigen, cOrigen, fDestino, cDestino, pieza, esCa
   }
   return false;
 }
+
 function validarMovimientoTorre(fOrigen, cOrigen, fDestino, cDestino) {
   if (fOrigen !== fDestino && cOrigen !== cDestino) return false;
   const pasoFila = fOrigen === fDestino ? 0 : (fDestino > fOrigen ? 1 : -1);
@@ -166,6 +159,7 @@ function validarMovimientoTorre(fOrigen, cOrigen, fDestino, cDestino) {
   }
   return true;
 }
+
 function validarMovimientoAlfil(fOrigen, cOrigen, fDestino, cDestino) {
   if (Math.abs(fDestino - fOrigen) !== Math.abs(cDestino - cOrigen)) return false;
   const pasoFila = fDestino > fOrigen ? 1 : -1;
@@ -180,16 +174,19 @@ function validarMovimientoAlfil(fOrigen, cOrigen, fDestino, cDestino) {
   }
   return true;
 }
+
 function validarMovimientoCaballo(fOrigen, cOrigen, fDestino, cDestino) {
   const dFila = Math.abs(fDestino - fOrigen);
   const dCol = Math.abs(cDestino - cOrigen);
   return (dFila === 2 && dCol === 1) || (dFila === 1 && dCol === 2);
 }
+
 function validarMovimientoRey(fOrigen, cOrigen, fDestino, cDestino) {
   const dFila = Math.abs(fDestino - fOrigen);
   const dCol = Math.abs(cDestino - cOrigen);
   return dFila <= 1 && dCol <= 1;
 }
+
 function verificarFinDePartido(piezaCapturada) {
   if (piezaCapturada === "♔") {
     juegoTerminado = true;
@@ -203,117 +200,121 @@ function verificarFinDePartido(piezaCapturada) {
     pantallaVictoria.classList.remove('oculto');
   }
 }
-function verificarCoronacion(casilla, fila, pieza) {
-  if ((pieza === "♙" && fila === 0) || (pieza === "♟" && fila === 7)) {
-    let seleccion = "";
-    const opcionesValidas = ["reina", "torre", "alfil", "caballo"];
-    while (!opcionesValidas.includes(seleccion)) {
-      seleccion = prompt("¡Peón coronado! Elige: reina, torre, alfil o caballo").toLowerCase().trim();
-    }
-    if (pieza === "♙") {
-      if (seleccion === "reina") casilla.textContent = "♕";
-      if (seleccion === "torre") casilla.textContent = "♖";
-      if (seleccion === "alfil") casilla.textContent = "♗";
-      if (seleccion === "caballo") casilla.textContent = "♘";
-    } else {
-      if (seleccion === "reina") casilla.textContent = "♛";
-      if (seleccion === "torre") casilla.textContent = "♜";
-      if (seleccion === "alfil") casilla.textContent = "♝";
-      if (seleccion === "caballo") casilla.textContent = "♞";
-    }
-  }
-}
-function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
-  const cOrigenNodo = document.querySelector(`[data-fila="${fOri}"][data-col="${cOri}"]`);
-  const cDestinoNodo = document.querySelector(`[data-fila="${fDes}"][data-col="${cDes}"]`);
-  const pOrigen = cOrigenNodo.textContent;
-  const pDestino = cDestinoNodo.textContent;
-  if (pDestino !== "") {
-    sonidoRosa.currentTime = 0; 
-    sonidoRosa.play().catch(e => console.log("Audio bloqueado"));
-  } else {
-    sonidoMover.currentTime = 0;
-    sonidoMover.play().catch(e => console.log("Audio bloqueado"));
-  }
-  if (pDestino !== "") {
-    const elementoPiezaCaida = document.createElement('div');
-    elementoPiezaCaida.textContent = pDestino;
-    if (piezasBlancas.includes(pDestino)) cementerioBlancas.appendChild(elementoPiezaCaida);
-    else if (piezasNegras.includes(pDestino)) cementerioNegras.appendChild(elementoPiezaCaida);
-  }
-  cDestinoNodo.textContent = pOrigen;
-  cOrigenNodo.textContent = "";
-  if (pOrigen === "♙" || pOrigen === "♟") verificarCoronacion(cDestinoNodo, fDes, pOrigen);
-  if (pDestino !== "") verificarFinDePartido(pDestino);
-  if (!juegoTerminado) {
-    turnoActual = (turnoActual === "blancas") ? "negras" : "blancas";
-    indicadorTurno.textContent = turnoActual.toUpperCase();
-  }
-}
-casillas.forEach(casilla => {
-  casilla.addEventListener('click', () => {
-    if (juegoTerminado) return;
-    
-    // --- NUEVA REGLA: VALIDAR SI EL JUGADOR TIENE PERMISO DE MOVER ESTE BANDO ---
-if (bandoAsignado === "espectador") {
-  alert("Debes elegir un bando (Blancas o Negras) en el menú superior para poder jugar.");
-  return;
-}
-if (bandoAsignado !== turnoActual) {
-  alert("No puedes mover. Es el turno del bando contrario.");
-  return;
-}
 
-// --- PRIMER CLIC: SELECCIÓN (El código continúa igual hacia abajo...) ---
+//PARTE 3 DE 3: Movimientos, Lógica de Sockets y Filtros Espejo
+// --- LÓGICA DE SELECCIÓN Y MOVIMIENTO EN PANTALLA ---
+casillas.forEach(casilla => {
+  casilla.addEventListener('click', (e) => {
+    if (juegoTerminado || bandoAsignado === "espectador") return;
+
+    const fClick = parseInt(e.currentTarget.getAttribute('data-fila'));
+    const cClick = parseInt(e.currentTarget.getAttribute('data-col'));
+    const contenidoClick = e.currentTarget.textContent;
+
+    const esMiPieza = (turnoActual === "blancas" && piezasBlancas.includes(contenidoClick)) ||
+                      (turnoActual === "negras" && piezasNegras.includes(contenidoClick));
+
     if (casillaOrigen === null) {
-      const pieza = casilla.textContent;
-      if (pieza !== "") {
-        if ((turnoActual === "blancas" && piezasBlancas.includes(pieza)) || (turnoActual === "negras" && piezasNegras.includes(pieza))) {
-          casillaOrigen = casilla;
-          casilla.classList.add('seleccionada');
-        } else alert("¡No es tu turno! Mueven: " + turnoActual);
+      if (esMiPieza && bandoAsignado === turnoActual) {
+        casillaOrigen = e.currentTarget;
+        casillaOrigen.classList.add('seleccionada');
       }
     } else {
-      if (casillaOrigen === casilla) {
+      const fOri = parseInt(casillaOrigen.getAttribute('data-fila'));
+      const cOri = parseInt(casillaOrigen.getAttribute('data-col'));
+      const piezaMover = casillaOrigen.textContent;
+
+      if (fOri === fClick && cOri === cClick) {
         casillaOrigen.classList.remove('seleccionada');
         casillaOrigen = null;
-      } else {
-        const fOrigen = parseInt(casillaOrigen.getAttribute('data-fila'));
-        const cOrigen = parseInt(casillaOrigen.getAttribute('data-col'));
-        const fDestino = parseInt(casilla.getAttribute('data-fila'));
-        const cDestino = parseInt(casilla.getAttribute('data-col'));
-        const piezaOrigen = casillaOrigen.textContent;
-        const piezaDestino = casilla.textContent;
-        const esCasillaVacia = (piezaDestino === "");
-        if (!esCasillaVacia) {
-          const esAliadoBlanco = piezasBlancas.includes(piezaOrigen) && piezasBlancas.includes(piezaDestino);
-          const esAliadoNegro = piezasNegras.includes(piezaOrigen) && piezasNegras.includes(piezaDestino);
-          if (esAliadoBlanco || esAliadoNegro) {
-            alert("Movimiento inválido: No puedes comer tus propias piezas.");
-            return;
-          }
-        }
-        let movimientoValido = false;
-        if (piezaOrigen === "♙" || piezaOrigen === "♟") movimientoValido = validarMovimientoPeon(fOrigen, cOrigen, fDestino, cDestino, piezaOrigen, esCasillaVacia);
-        else if (piezaOrigen === "♖" || piezaOrigen === "♜") movimientoValido = validarMovimientoTorre(fOrigen, cOrigen, fDestino, cDestino);
-        else if (piezaOrigen === "♗" || piezaOrigen === "♝") movimientoValido = validarMovimientoAlfil(fOrigen, cOrigen, fDestino, cDestino);
-        else if (piezaOrigen === "♘" || piezaOrigen === "♞") movimientoValido = validarMovimientoCaballo(fOrigen, cOrigen, fDestino, cDestino);
-        else if (piezaOrigen === "♕" || piezaOrigen === "♛") movimientoValido = validarMovimientoTorre(fOrigen, cOrigen, fDestino, cDestino) || validarMovimientoAlfil(fOrigen, cOrigen, fDestino, cDestino);
-        else if (piezaOrigen === "♔" || piezaOrigen === "♚") movimientoValido = validarMovimientoRey(fOrigen, cOrigen, fDestino, cDestino);
-        if (!movimientoValido) {
-          alert("Movimiento inválido para esta pieza.");
-          return;
-        }
-        socket.emit('movimiento-ajedrez', { fOri: fOrigen, cOri: cOrigen, fDes: fDestino, cDes: cDestino });
+        return;
+      }
+
+      if (esMiPieza) {
         casillaOrigen.classList.remove('seleccionada');
-        moverPiezaEnPantalla(fOrigen, cOrigen, fDestino, cDestino);
-        casillaOrigen = null;
+        casillaOrigen = e.currentTarget;
+        casillaOrigen.classList.add('seleccionada');
+        return;
+      }
+
+      let movimientoValido = false;
+      const esVacia = contenidoClick === "";
+
+      if (piezaMover === "♙" || piezaMover === "♟") {
+        movimientoValido = validarMovimientoPeon(fOri, cOri, fClick, cClick, piezaMover, esVacia);
+      } else if (piezaMover === "♖" || piezaMover === "♜") {
+        movimientoValido = validarMovimientoTorre(fOri, cOri, fClick, cClick);
+      } else if (piezaMover === "♗" || piezaMover === "♝") {
+        movimientoValido = validarMovimientoAlfil(fOri, cOri, fClick, cClick);
+      } else if (piezaMover === "♘" || piezaMover === "♞") {
+        movimientoValido = validarMovimientoCaballo(fOri, cOri, fClick, cClick);
+      } else if (piezaMover === "♕" || piezaMover === "♛") {
+        movimientoValido = validarMovimientoTorre(fOri, cOri, fClick, cClick) || 
+                           validarMovimientoAlfil(fOri, cOri, fClick, cClick);
+      } else if (piezaMover === "♔" || piezaMover === "♚") {
+        movimientoValido = validarMovimientoRey(fOri, cOri, fClick, cClick);
+      }
+
+      if (movimientoValido) {
+        ejecutarMovimientoLogico(fOri, cOri, fClick, cClick);
+        
+        // Enviamos el movimiento agregando la firma de quién lo originó
+        socket.emit('movimiento-ajedrez', {
+          fOri: fOri, cOri: cOri, fDes: fClick, cDes: cClick,
+          bandoRemitente: bandoAsignado
+        });
       }
     }
   });
 });
 
-socket.on('oponente-movio', (datos) => moverPiezaEnPantalla(datos.fOri, datos.cOri, datos.fDes, datos.cDes));
+function ejecutarMovimientoLogico(fOri, cOri, fDes, cDes) {
+  const cOrigen = document.querySelector(`[data-fila="${fOri}"][data-col="${cOri}"]`);
+  const cDestino = document.querySelector(`[data-fila="${fDes}"][data-col="${cDes}"]`);
+  const pieza = cOrigen.textContent;
+  const captura = cDestino.textContent;
+
+  if (captura !== "") {
+    sonidoRosa.play();
+    const span = document.createElement('span');
+    span.textContent = captura;
+    if (piezasBlancas.includes(captura)) {
+      cementerioNegras.appendChild(span);
+    } else {
+      cementerioBlancas.appendChild(span);
+    }
+    verificarFinDePartido(captura);
+  } else {
+    sonidoMover.play();
+  }
+
+  cDestino.textContent = pieza;
+  cOrigen.textContent = "";
+  if (casillaOrigen) casillaOrigen.classList.remove('seleccionada');
+  casillaOrigen = null;
+
+  if (!juegoTerminado) {
+    turnoActual = turnoActual === "blancas" ? "negras" : "blancas";
+    indicadorTurno.textContent = turnoActual.toUpperCase();
+  }
+}
+
+function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
+  ejecutarMovimientoLogico(fOri, cOri, fDes, cDes);
+}
+
+
+// ==========================================
+// --- RECEPTORES INALÁMBRICOS DE SOCKETS ---
+// ==========================================
+
+// --- 1. RECEPTOR DE MOVIMIENTOS CON FILTRO ---
+socket.on('oponente-movio', (datos) => {
+  if (datos.bandoRemitente === bandoAsignado) return; // Filtro espejo (ignora jugada propia)
+  moverPiezaEnPantalla(datos.fOri, datos.cOri, datos.fDes, datos.cDes);
+});
+
+// --- 2. RECEPTOR DE REINICIOS ---
 socket.on('oponente-reinicio', () => {
   casillas.forEach((casilla, index) => {
     casilla.textContent = estadoInicial[index];
@@ -326,30 +327,31 @@ socket.on('oponente-reinicio', () => {
   cementerioBlancas.innerHTML = "";
   cementerioNegras.innerHTML = "";
   pantallaVictoria.classList.add('oculto');
-
-   // --- TAMBIÉN AQUÍ PARA EL JUGADOR REMOTO ---
   selectorBando.value = "espectador"; 
   bandoAsignado = "espectador";
-
-  alert("El oponente ha reiniciado la partida.");
+  
+  alert("La partida ha sido reiniciada.");
 });
 
-// --- NUEVO: ESCUCHAR MENSAJES REMOTOS DEL OPONENTE ---
+// --- 3. RECEPTOR DE CHAT CON FILTRO ---
 socket.on('recibir-mensaje', (datosRecibidos) => {
+  const miApodoActual = entradaApodo.value.trim() || "Anónimo";
+  const miBandoTexto = bandoAsignado === "blancas" ? "⚪" : (bandoAsignado === "negras" ? "⚫" : "👁️");
+  const miFirmaCompleta = `${miBandoTexto} ${miApodoActual}`;
+
+  if (datosRecibidos.remitente === miFirmaCompleta) return; // Filtro espejo (ignora chat propio)
   agregarMensajeAlCuadro(datosRecibidos, "oponente");
 });
 
-// --- NUEVO: RECEPTOR PARA BLOQUEAR BANDOS YA OCUPADOS POR OTROS ---
+// --- 4. RECEPTOR DE EMPAREJAMIENTO AUTOMÁTICO Y GIRO DE TABLERO ---
 socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
   const opcionBlancas = selectorBando.querySelector('option[value="blancas"]');
   const opcionNegras = selectorBando.querySelector('option[value="negras"]');
 
-  // Si las blancas están ocupadas y NO las tengo yo, las deshabilitamos
   if (estadoBandos.blancasOcupado && bandoAsignado !== "blancas") {
     opcionBlancas.disabled = true;
     opcionBlancas.textContent = "Piezas Blancas ⚪ (Ocupado)";
     
-    // Si yo era espectador y las blancas se ocuparon, me auto-asigno negras si están libres
     if (bandoAsignado === "espectador" && !estadoBandos.negrasOcupado) {
       bandoAsignado = "negras";
       selectorBando.value = "negras";
@@ -360,12 +362,10 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     opcionBlancas.textContent = "Piezas Blancas ⚪";
   }
 
-  // Si las negras están ocupadas y NO las tengo yo, las deshabilitamos
   if (estadoBandos.negrasOcupado && bandoAsignado !== "negras") {
     opcionNegras.disabled = true;
     opcionNegras.textContent = "Piezas Negras ⚫ (Ocupado)";
     
-    // Si yo era espectador y las negras se ocuparon, me auto-asigno blancas si están libres
     if (bandoAsignado === "espectador" && !estadoBandos.blancasOcupado) {
       bandoAsignado = "blancas";
       selectorBando.value = "blancas";
@@ -376,16 +376,13 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     opcionNegras.textContent = "Piezas Negras ⚫";
   }
 
-   // --- NUEVO: CAPTURAR EL TABLERO Y VOLTEARLO SI ERES NEGRAS ---
+  // LÓGICA DEL GIRO AUTOMÁTICO DE CÁMARA
   const elementoTablero = document.getElementById('tablero');
-  
   if (bandoAsignado === "negras") {
-    // Si eres el jugador de las negras, el tablero se voltea para ti
-    elementoTablero.classList.add('tablero-volteado');
+    elementoTablero.classList.add('tablero-volteado'); 
   } else {
-    // Si eres blancas o espectador, el tablero se mantiene en la orientación normal
     elementoTablero.classList.remove('tablero-volteado');
   }
-  
 });
+
 
