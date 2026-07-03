@@ -26,23 +26,30 @@ io.on('connection', (socket) => {
   socket.miSalaActual = null; 
 
   // --- 1. Escuchar cuando un jugador se une a una sala específica ---
+    
   socket.on('unirse-a-sala', (nombreSala) => {
     socket.miSalaActual = nombreSala; 
     socket.join(nombreSala); // Meter al jugador a la habitación digital oficial
 
     if (!salasOcupadas[nombreSala]) {
-      salasOcupadas[nombreSala] = { blancas: null, negras: null };
+      // Agregamos un contador para ir rotando los colores (0 a 5)
+      salasOcupadas[nombreSala] = { blancas: null, negras: null, contadorColor: 0 };
     }
 
-    // CORRECCIÓN CLAVE: Responder ÚNICAMENTE al jugador que entra (socket.emit)
-    // Esto evita que las pantallas se confundan entre sí al iniciar la sala
+    // LE ASIGNAMOS UN COLOR ÚNICO A ESTE SOCKET ESPECÍFICO
+    // Al usar el residuo (%), si llega al 6 vuelve a empezar en 0 de forma infinita
+    socket.miNumeroColor = salasOcupadas[nombreSala].contadorColor % 6;
+    salasOcupadas[nombreSala].contadorColor++; // Aumentamos para el siguiente que entre
+
+    // Informar de inmediato cómo están los bandos en su sala específica
     socket.emit('actualizar-bandos-ocupados', {
       blancasOcupado: salasOcupadas[nombreSala].blancas !== null,
       negrasOcupado: salasOcupadas[nombreSala].negras !== null
     });
     
-    console.log(`Usuario ${socket.id} entró con éxito a la sala: ${nombreSala}`);
+    console.log(`Usuario ${socket.id} entró a la sala: ${nombreSala} con color neón: ${socket.miNumeroColor}`);
   });
+
 
   // --- 2. Escuchar cuando alguien reclama un bando dentro de su sala ---
   socket.on('solicitar-bando', (bandoElegido) => {
