@@ -28,32 +28,25 @@
   <!-- CORREGIDO: Todo el juego envuelto en contenedor-principal, inicia oculto para el lobby -->
   <div id="contenedor-principal" class="oculto">
     
-    <!-- Interfaz de control superior equilibrada -->
-    <div id="interfaz">
-      <div id="marcador-turno">Turno: <span id="bando-actual">BLANCAS</span></div>
-      
-      <!-- ID unificado como contenedor-controles para respetar tu diseño en style.css -->
-      <div id="contenedor-controles">
-        <!-- Grupo de Apodo -->
-        <div class="control-grupo">
-           <label for="entrada-apodo">TU APODO:</label>
-           <input type="text" id="entrada-apodo" placeholder="Jugador Anónimo" value="Anónimo" maxlength="15" autocomplete="off">
-        </div>
+    <!-- Interfaz de control superior limpia y simétrica -->
+  <div id="interfaz">
+    <div id="marcador-turno">Turno: <span id="bando-actual">BLANCAS</span></div>
+    
+    <div id="contenedor-controles">
+      <!-- Input de Apodo con guía interna (placeholder) -->
+      <input type="text" id="entrada-apodo" placeholder="Tu Apodo (Ej: Anónimo)" value="Anónimo" maxlength="15" autocomplete="off">
 
-        <!-- Grupo de Bando corregido para que el texto quede sobre el cuadro -->
-        <div class="control-grupo">
-          <label for="selector-bando">TU BANDO:</label>
-          <select id="selector-bando">
-            <option value="espectador">Espectador 👁️</option>
-            <option value="blancas">Blancas (♙)</option>
-            <option value="negras">Negras (♟)</option>
-          </select>
-        </div>
-        <!-- ¡NUEVA UBICACIÓN DEL BOTÓN! Ahora está en la misma fila -->
-        <button id="btn-reiniciar">Reiniciar Partida</button>
-      </div>
+      <!-- Selector de bando sin label arriba -->
+      <select id="selector-bando">
+        <option value="espectador">Tu Bando: Espectador 👁️</option>
+        <option value="blancas">Tu Bando: Blancas (♙)</option>
+        <option value="negras">Tu Bando: Negras (♟)</option>
+      </select>
 
+      <button id="btn-reiniciar">Reiniciar Partida</button>
     </div>
+  </div>
+
 
     <div id="zona-juego">
       <!-- Lado izquierdo: Piezas blancas capturadas -->
