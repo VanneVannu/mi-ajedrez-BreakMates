@@ -37,8 +37,8 @@ io.on('connection', (socket) => {
     }
 
     // LE ASIGNAMOS UN COLOR ÚNICO A ESTE SOCKET ESPECÍFICO
-    // Al usar el residuo (%), si llega al 6 vuelve a empezar en 0 de forma infinita
-    socket.miNumeroColor = salasOcupadas[nombreSala].contadorColor % 6;
+    // Al usar el residuo (%), si llega al 7 vuelve a empezar en 0 de forma infinita
+    socket.miNumeroColor = salasOcupadas[nombreSala].contadorColor % 7;
     salasOcupadas[nombreSala].contadorColor++; // Aumentamos para el siguiente que entre
 
     // Informar de inmediato cómo están los bandos en su sala específica
