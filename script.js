@@ -7,6 +7,7 @@ let casillaOrigen = null;
 let turnoActual = "blancas";
 let juegoTerminado = false;
 const entradaApodo = document.getElementById('entrada-apodo');
+let partidaIniciada = false; // NUEVO: Interruptor para pausar el reloj al inicio
 
 // --- CONTROL LÓGICO DE ENTRADA A SALAS (LOBBY) ---
 const pantallaLobby = document.getElementById('pantalla-lobby');
@@ -161,9 +162,13 @@ function formatearTiempo(segundos) {
 }
 
 // El motor que descuenta 1 segundo cada 1000 milisegundos
+// Función del segundero modificada para respetar la primera jugada
 function iniciarSegundero() {
-  clearInterval(intervaloReloj); // Limpiar cualquier reloj viejo encendido
+  clearInterval(intervaloReloj); // Limpiar cualquier segundero viejo
   actualizarBrilloRelojes();
+
+  // NUEVO: Si la partida aún no inicia, dejamos el reloj en pausa visual
+  if (!partidaIniciada) return; 
 
   intervaloReloj = setInterval(() => {
     if (juegoTerminado) {
@@ -182,6 +187,7 @@ function iniciarSegundero() {
     }
   }, 1000);
 }
+
 
 // Detiene el juego si el marcador digital llega a 00:00
 function declararVictoriaPorTiempo(ganador) {
@@ -246,9 +252,12 @@ btnReiniciar.addEventListener('click', () => {
   txtTiempoBlancas.textContent = "05:00"; // Cambia el texto en pantalla
   txtTiempoNegras.textContent = "05:00";  // Cambia el texto en pantalla
   actualizarBrilloRelojes();     // Apaga las luces cian neón de los relojes
+  
   // --------------------------------------------------------
+  partidaIniciada = false; // <-- ¡NUEVA LÍNEA AQUÍ! Pausa el reloj localmente
+  // -------------------------------------------------------------
 
-  // Avisar al servidor (esta línea ya existía)
+  // Avisar al servidor 
   socket.emit('solicitar-reinicio');
 });
 
@@ -382,6 +391,9 @@ casillas.forEach(casilla => {
       if (movimientoValido) {
         ejecutarMovimientoLogico(fOri, cOri, fClick, cClick);
         
+        // NUEVO: Activamos la partida en el primer movimiento
+        partidaIniciada = true; 
+
          // MODIFICADO: Enviamos el movimiento agregando bando y tiempos actuales
         socket.emit('movimiento-ajedrez', {
           fOri: fOri, cOri: cOri, fDes: fClick, cDes: cClick,
@@ -440,6 +452,8 @@ function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
 socket.on('oponente-movio', (datos) => {
   if (datos.bandoRemitente === bandoAsignado) return; // Filtro espejo
   
+ partidaIniciada = true; // NUEVO: Enciende el reloj en la pantalla del rival al recibir el tiro
+
   // Sincronizar el tiempo exacto que le quedaba al oponente según el servidor
   if (datos.tBlancas !== undefined) {
     tiempoBlancas = datos.tBlancas;
@@ -476,6 +490,8 @@ socket.on('oponente-reinicio', () => {
   txtTiempoNegras.textContent = "05:00";
   actualizarBrilloRelojes();
   
+  partidaIniciada = false; // <-- ¡NUEVA LÍNEA AQUÍ TAMBIÉN! Pausa el reloj remoto
+
   alert("La partida ha sido reiniciada.");
 });
 
