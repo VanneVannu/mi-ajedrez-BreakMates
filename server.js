@@ -76,9 +76,10 @@ io.on('connection', (socket) => {
     });
   });
 
-  // --- 3. Retransmitir movimientos con io.to ---
+   // --- 3. RETRANSMITIR MOVIMIENTOS Y TIEMPOS DE FORMA INFALIBLE ---
   socket.on('movimiento-ajedrez', (datosMovimiento) => {
     if (socket.miSalaActual) {
+      // Retransmitimos el movimiento incluyendo los tiempos que le llegaron del cliente
       io.to(socket.miSalaActual).emit('oponente-movio', datosMovimiento);
     }
   });
