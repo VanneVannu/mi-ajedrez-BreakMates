@@ -54,7 +54,7 @@ function enviarMensajeTexto() {
   const datos = { remitente: nombreRemitente, texto: texto };
 
   // Mostrar en tu pantalla de inmediato (en fucsia)
-  agregarMensajeAlCuadro(datos, "yo");
+  //agregarMensajeAlCuadro(datos, "yo");
   
   // ¡MUY IMPORTANTE! Esta línea envía el mensaje por internet al servidor
   socket.emit('enviar-mensaje', datos);
