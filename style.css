@@ -369,11 +369,11 @@ body {
 /*-------------------------------------------------------*/
 /*Bloque donde se obliga a alinear-----------------------*/
 
-/* --- ALINEACIÓN SIMÉTRICA DE LA BARRA SUPERIOR (ESTRUCTURA DE FILA) --- */
+/* --- ALINEACIÓN GEOMÉTRICA DE LA BARRA SUPERIOR --- */
 #interfaz {
   display: flex !important;
   flex-direction: row !important;
-  align-items: center !important; /* Centra el Turno con respecto a todo el bloque de controles */
+  align-items: center !important; /* Centra horizontalmente todo con respecto al Turno */
   justify-content: center !important; 
   gap: 40px !important; 
   padding: 15px 0 !important;
@@ -384,34 +384,36 @@ body {
 #contenedor-controles {
   display: flex !important;
   flex-direction: row !important;
-  align-items: flex-end !important; /* Fuerza a las tres cajas (inputs y botón) a nivelar sus bases al milímetro */
+  align-items: center !important; /* Al no haber labels, alinea el centro exacto de las 3 cajas */
   gap: 25px !important;
 }
 
-.control-grupo {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 6px !important;
-}
-
-#marcador-turno,
-.control-grupo label {
+#marcador-turno {
   color: #00f0ff !important;
   text-shadow: 0 0 5px #00f0ff !important;
   font-size: 12px !important;
   font-weight: bold !important;
   letter-spacing: 1px !important;
-  margin-bottom: 0 !important;
 }
 
-/* Forzar tamaño idéntico en altura y quitar márgenes extraños */
+/* Forzar tamaño idéntico milimétrico y quitar márgenes extraños */
 #entrada-apodo,
 #selector-bando,
 #btn-reiniciar {
   height: 40px !important;
   box-sizing: border-box !important;
-  margin: 0 !important; /* Borra cualquier margen viejo de arriba que lo desalineaba */
+  margin: 0 !important;
+  font-size: 13px !important;
+}
+
+/* Estilo estético para el select cyberpunk */
+#selector-bando {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid #5c134f !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+  padding: 0 10px !important;
+  outline: none !important;
 }
 
 #btn-reiniciar {
@@ -419,6 +421,15 @@ body {
   align-items: center !important;
   justify-content: center !important;
   padding: 0 20px !important;
+}
+
+/* --- NUEVO: RESTAURAR EL RECUADRO NEÓN DIVISORIO DEL CHAT --- */
+#formulario-chat {
+  display: flex !important;
+  padding: 8px !important;
+  border-top: 2px solid #5c134f !important; /* ¡Aquí devolvemos la línea divisoria neón morada! */
+  background-color: #0d0c1d !important;
+  box-shadow: 0 -3px 10px rgba(92, 19, 79, 0.2); /* Sutil brillo hacia arriba */
 }
 
 
