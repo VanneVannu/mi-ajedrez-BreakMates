@@ -428,13 +428,13 @@ body {
 
 
 /* --- PALETA DE COLORES NEÓN DINÁMICOS PARA ESPECTADORES --- */
-.msg-neon-0 .remitente { color: #00f0ff !important; text-shadow: 0 0 5px #00f0ff; } /* Cian */
-.msg-neon-1 .remitente { color: #ff007f !important; text-shadow: 0 0 5px #ff007f; } /* Fucsia Neón */
-.msg-neon-2 .remitente { color: #ffff00 !important; text-shadow: 0 0 5px #ffff00; } /* Amarillo Neón */
-.msg-neon-3 .remitente { color: #ff9900 !important; text-shadow: 0 0 5px #ff9900; } /* Naranja Neón */
-.msg-neon-4 .remitente { color: #cc00ff !important; text-shadow: 0 0 5px #cc00ff; } /* Morado Neón */
-.msg-neon-5 .remitente { color: #00ffcc !important; text-shadow: 0 0 5px #00ffcc; } /* Menta Neón */
-.msg-neon-6 .remitente { color: #39ff14 !important; text-shadow: 0 0 5px #39ff14; } /* Verde Neón */
+.msg-neon-0 span.remitente { color: #00f0ff !important; text-shadow: 0 0 5px #00f0ff; } /* Cian */
+.msg-neon-1 span.remitente { color: #ff007f !important; text-shadow: 0 0 5px #ff007f; } /* Fucsia Neón */
+.msg-neon-2 span.remitente { color: #ffff00 !important; text-shadow: 0 0 5px #ffff00; } /* Amarillo Neón */
+.msg-neon-3 span.remitente { color: #ff9900 !important; text-shadow: 0 0 5px #ff9900; } /* Naranja Neón */
+.msg-neon-4 span.remitente { color: #cc00ff !important; text-shadow: 0 0 5px #cc00ff; } /* Morado Neón */
+.msg-neon-5 span.remitente { color: #00ffcc !important; text-shadow: 0 0 5px #00ffcc; } /* Menta Neón */
+.msg-neon-6 span.remitente { color: #39ff14 !important; text-shadow: 0 0 5px #39ff14; } /* Verde Neón */
 
 /*-------------------------------------------------------*/
  
