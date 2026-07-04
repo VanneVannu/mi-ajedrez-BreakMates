@@ -91,13 +91,26 @@ entradaMensaje.addEventListener('keypress', (e) => {
 });
 
 // Función para pintar la burbuja de texto dentro del contenedor
+// FUNCIÓN BLINDADA PARA FORCEAR LOS COLORES NEÓN EN EL NICKNAME
 function agregarMensajeAlCuadro(datos, claseOrigen) {
   const div = document.createElement('div');
   div.classList.add('mensaje', claseOrigen);
+  
+  // Imprimir en la consola (F12) para revisar qué datos están viajando por la red
+  console.log("Datos recibidos en el chat por internet:", datos);
+
+  // CORRECCIÓN DE SEGURIDAD: Si por alguna razón el servidor no envía un número, 
+  // le asignamos el color 0 (Cian) de forma temporal para que nunca se quede blanco.
+  const colorAsignado = (datos.numColor !== undefined) ? datos.numColor : 0;
+  
+  // Añadimos la clase neón de forma obligatoria al contenedor del mensaje
+  div.classList.add(`msg-neon-${colorAsignado}`);
+  
   div.innerHTML = `<span class="remitente">[${datos.remitente}]:</span> ${datos.texto}`;
   mensajesChat.appendChild(div);
   mensajesChat.scrollTop = mensajesChat.scrollHeight; // Auto-scroll al fondo
 }
+
 
 // --- CONTROL DE BANDO ELEGIDO POR EL USUARIO ---
 let bandoAsignado = "espectador"; 
