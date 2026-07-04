@@ -364,6 +364,52 @@ body {
 
 #btn-entrar-sala:hover { transform: scale(1.03); }
 
+/* --- ESTILOS PARA LOS TEMPORIZADORES NEÓN --- */
+#contenedor-relojes {
+  display: flex !important;
+  justify-content: space-around !important;
+  width: 100% !important;
+  max-width: 460px !important; /* Mismo ancho que tu tablero */
+  margin: 0 auto 15px auto !important;
+}
+
+.reloj-bloque {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(92, 19, 79, 0.4) !important;
+  border-radius: 4px !important;
+  padding: 8px 20px !important;
+  min-width: 120px !important;
+  transition: all 0.3s ease !important;
+}
+
+.reloj-etiqueta {
+  font-size: 10px !important;
+  color: #fff !important;
+  opacity: 0.6 !important;
+  letter-spacing: 1px !important;
+  margin-bottom: 2px !important;
+}
+
+.reloj-tiempo {
+  font-size: 24px !important;
+  font-family: monospace !important;
+  color: #fff !important;
+  font-weight: bold !important;
+}
+
+/* Clases dinámicas: El reloj activo se enciende en cian neón */
+.reloj-bloque.activo {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.3) !important;
+}
+
+.reloj-bloque.activo .reloj-tiempo {
+  color: #00f0ff !important;
+  text-shadow: 0 0 8px #00f0ff !important;
+}
 
 
 /*-------------------------------------------------------*/
