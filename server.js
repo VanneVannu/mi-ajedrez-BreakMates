@@ -90,6 +90,8 @@ io.on('connection', (socket) => {
     }
   });
 
+
+
   // --- 5. Retransmitir mensajes del chat inyectando el color neón de forma infalible ---
   socket.on('enviar-mensaje', (datosMensaje) => {
     if (socket.miSalaActual) {
@@ -100,6 +102,8 @@ io.on('connection', (socket) => {
       io.to(socket.miSalaActual).emit('recibir-mensaje', datosMensaje);
     }
   });
+
+
 
   // --- 6. Si se desconecta, liberamos su bando de su sala específica ---
   socket.on('disconnect', () => {
