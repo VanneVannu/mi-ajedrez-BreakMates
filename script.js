@@ -391,19 +391,24 @@ casillas.forEach(casilla => {
       if (movimientoValido) {
         ejecutarMovimientoLogico(fOri, cOri, fClick, cClick);
         
-        // NUEVO: Activamos la partida en el primer movimiento
+        // ACTIVAMOS LA PARTIDA
         partidaIniciada = true; 
 
-         // MODIFICADO: Enviamos el movimiento agregando bando y tiempos actuales
+        // --- NUEVO: Capturar una foto instantánea del estado de las 64 casillas ---
+        const fotoActual = Array.from(casillas).map(c => c.textContent);
+
+        // MODIFICADO: Enviamos el movimiento agregando bando, tiempos y la foto del tablero
         socket.emit('movimiento-ajedrez', {
           fOri: fOri, cOri: cOri, fDes: fClick, cDes: cClick,
           bandoRemitente: bandoAsignado,
-          tBlancas: tiempoBlancas, // <-- NUEVA LÍNEA
-          tNegras: tiempoNegras    // <-- NUEVA LÍNEA
+          tBlancas: tiempoBlancas, 
+          tNegras: tiempoNegras,
+          fotoTablero: fotoActual // <-- NUEVA PROPIEDAD DE RED
         });
-        iniciarSegundero(); // <-- NUEVA LÍNEA: Activa el reloj localmente de inmediato
 
+        iniciarSegundero(); 
       }
+
     }
   });
 });
@@ -557,3 +562,28 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     elementoTablero.classList.remove('tablero-volteado');
   }
 });// Fin de la antena
+
+// --- RECEPTOR EN SCRIPT.JS PARA ESPECTADORES QUE ENTRAN TARDE ---
+socket.on('sincronizar-partida-espectador', (datos) => {
+  // 1. Dibujar el tablero en la posición exacta usando tu propiedad .tablero
+  if (datos.tablero) {
+    casillas.forEach((casilla, index) => {
+      casilla.textContent = datos.tablero[index];
+    });
+  }
+  
+  // 2. Sincronizar los segundos de los cronómetros neón
+  tiempoBlancas = datos.tBlancas;
+  tiempoNegras = datos.tNegras;
+  txtTiempoBlancas.textContent = formatearTiempo(tiempoBlancas);
+  txtTiempoNegras.textContent = formatearTiempo(tiempoNegras);
+  
+  // 3. Sincronizar el turno actual en la barra superior
+  turnoActual = datos.turnoActual;
+  indicadorTurno.textContent = turnoActual.toUpperCase();
+  
+  // 4. Activar los interruptores y encender el segundero en vivo
+  partidaIniciada = datos.partidaIniciada;
+  iniciarSegundero();
+});
+
