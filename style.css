@@ -222,6 +222,32 @@ body {
   max-height: 380px;
 }
 
+/* --- CORRECCIÓN DEFINITIVA DE ALTURA Y ASENTAMIENTO DEL CHAT --- */
+#contenedor-chat {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 460px !important; /* Ajusta este valor al mismo alto exacto de tu tablero */
+  box-sizing: border-box !important;
+}
+
+#mensajes-chat {
+  flex: 1 !important; /* TRUCO CLAVE: Se estira al máximo y empuja el formulario hacia el fondo */
+  overflow-y: auto !important; 
+  padding: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+#formulario-chat {
+  margin-top: auto !important; /* Asegura el anclaje en el fondo del contenedor */
+  display: flex !important;
+  padding: 8px !important;
+  border-top: 2px solid #5c134f !important;
+  background-color: #0d0c1d !important;
+}
+
+
 /* Burbujas de mensajes */
 .mensaje {
   color: #fff;
