@@ -90,16 +90,16 @@ io.on('connection', (socket) => {
     }
   });
 
-  // --- 5. Retransmitir mensajes del chat con io.to ---
-   
+  // --- 5. Retransmitir mensajes del chat inyectando el color neón de forma infalible ---
   socket.on('enviar-mensaje', (datosMensaje) => {
     if (socket.miSalaActual) {
-      // Le pegamos al objeto el número de color que tiene este socket guardado
-      datosMensaje.numColor = socket.miNumeroColor;
+      // Si por alguna razón el socket no tiene color asignado, le damos el 0 por defecto
+      datosMensaje.numColor = socket.miNumeroColor !== undefined ? socket.miNumeroColor : 0;
+      
+      // Enviamos a TODOS en la sala con io.to
       io.to(socket.miSalaActual).emit('recibir-mensaje', datosMensaje);
     }
   });
-
 
   // --- 6. Si se desconecta, liberamos su bando de su sala específica ---
   socket.on('disconnect', () => {
