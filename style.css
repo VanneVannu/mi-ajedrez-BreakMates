@@ -369,31 +369,41 @@ body {
 /*-------------------------------------------------------*/
 /*Bloque donde se obliga a alinear-----------------------*/
 
-/* --- ALINEACIÓN SIMÉTRICA DE LA BARRA SUPERIOR DEFINTIVA --- */
+/* --- ALINEACIÓN SIMÉTRICA Y CENTRADA DE LA BARRA SUPERIOR --- */
 #interfaz {
   display: flex !important;
   flex-direction: row !important;
-  align-items: flex-end !important; /* Nivela el Turno, las cajas y el Botón por su base */
-  justify-content: center !important; /* Centra toda la barra en la pantalla */
-  gap: 30px !important; /* Espaciado elegante entre cada sección principal */
+  align-items: center !important; /* Centra verticalmente todos los bloques */
+  justify-content: center !important; /* Centra el contenido horizontalmente */
+  gap: 35px !important; /* Espacio limpio entre secciones */
   padding: 15px 0 !important;
+  background-color: rgba(255, 255, 255, 0.02); /* Sutil fondo para enmarcar */
+  border-bottom: 1px solid rgba(92, 19, 79, 0.3);
 }
 
 #contenedor-controles {
   display: flex !important;
-  flex-direction: row !important; /* Mantiene Apodo y Bando uno al lado del otro */
-  align-items: flex-end !important; /* Alinea los inputs por su base */
-  gap: 25px !important; /* Separación horizontal entre Apodo y Bando */
+  flex-direction: row !important;
+  align-items: center !important; /* Centra los dos grupos entre sí */
+  gap: 25px !important;
 }
 
 .control-grupo {
   display: flex !important;
-  flex-direction: column !important; /* Mantiene la etiqueta sobre el cuadro de texto */
+  flex-direction: column !important;
   align-items: flex-start !important;
   gap: 6px !important;
 }
 
-/* Forzar la estética neón en todas las etiquetas de la barra */
+/* Nivelar el indicador de turno de la izquierda */
+#marcador-turno {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 4px !important;
+}
+
+/* Unificar el estilo de los textos de guía */
 #marcador-turno,
 .control-grupo label {
   color: #00f0ff !important;
@@ -401,17 +411,24 @@ body {
   font-size: 12px !important;
   font-weight: bold !important;
   letter-spacing: 1px !important;
-  margin-bottom: 0 !important; /* Evita desajustes por márgenes viejos */
+  margin-bottom: 0 !important;
 }
 
-/* Nivelar el tamaño del botón para que calce perfecto con los inputs */
+/* Forzar a que los inputs, el select y el botón midan exactamente lo mismo de alto */
+#entrada-apodo,
+#selector-bando,
 #btn-reiniciar {
-  margin-top: 0 !important;
-  height: 38px !important; /* Ajusta la altura para que sea idéntica a las cajas */
+  height: 40px !important;
+  box-sizing: border-box !important;
+}
+
+#btn-reiniciar {
+  margin-top: 20px !important; /* Compensa la altura del título que tienen las otras cajas */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
+
 
 /* --- ROTACIÓN INDESTRUCTIBLE DEL TABLERO --- */
 .tablero-volteado {
