@@ -357,6 +357,7 @@ socket.on('oponente-reinicio', () => {
   alert("La partida ha sido reiniciada.");
 });
 
+
 // --- 3. RECEPTOR DE CHAT MULTICOLOR CORREGIDO ---
 socket.on('recibir-mensaje', (datosRecibidos) => {
   // Capturamos nuestro propio apodo para comparar
@@ -373,44 +374,48 @@ socket.on('recibir-mensaje', (datosRecibidos) => {
   }
 });
 
-// --- 4. RECEPTOR DE EMPAREJAMIENTO AUTOMÁTICO Y GIRO DE TABLERO ---
+
+// --- 4. RECEPTOR DE EMPAREJAMIENTO AUTOMÁTICO Y GIRO DE TABLERO CORREGIDO ---
 socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
   const opcionBlancas = selectorBando.querySelector('option[value="blancas"]');
   const opcionNegras = selectorBando.querySelector('option[value="negras"]');
 
-  if (estadoBandos.blancasOcupado && bandoAsignado !== "blancas") {
-    opcionBlancas.disabled = true;
-    opcionBlancas.textContent = "Piezas Blancas ⚪ (Ocupado)";
-    
-    if (bandoAsignado === "espectador" && !estadoBandos.negrasOcupado) {
+  // GESTIÓN INDEPENDIENTE DE PIEZAS BLANCAS
+  if (estadoBandos.blancasOcupado) {
+    opcionBlancas.textContent = bandoAsignado === "blancas" ? "Blancas (♙) - Tuyo" : "Blancas (♙) - Ocupado";
+    if (bandoAsignado !== "blancas") opcionBlancas.disabled = true;
+  } else {
+    opcionBlancas.disabled = false;
+    opcionBlancas.textContent = "Blancas (♙)";
+  }
+
+  // GESTIÓN INDEPENDIENTE DE PIEZAS NEGRAS (Corregido para forzar el bloqueo)
+  if (estadoBandos.negrasOcupado) {
+    opcionNegras.textContent = bandoAsignado === "negras" ? "Negras (♟) - Tuyo" : "Negras (♟) - Ocupado";
+    if (bandoAsignado !== "negras") opcionNegras.disabled = true;
+  } else {
+    opcionNegras.disabled = false;
+    opcionNegras.textContent = "Negras (♟)";
+  }
+
+  // AUTO-ASIGNACIÓN AUTOMÁTICA SI ERES EL SEGUNDO EN ENTRAR
+  if (bandoAsignado === "espectador") {
+    if (estadoBandos.blancasOcupado && !estadoBandos.negrasOcupado) {
       bandoAsignado = "negras";
       selectorBando.value = "negras";
       socket.emit('solicitar-bando', "negras");
-    }
-  } else {
-    opcionBlancas.disabled = false;
-    opcionBlancas.textContent = "Piezas Blancas ⚪";
-  }
-
-  if (estadoBandos.negrasOcupado && bandoAsignado !== "negras") {
-    opcionNegras.disabled = true;
-    opcionNegras.textContent = "Piezas Negras ⚫ (Ocupado)";
-    
-    if (bandoAsignado === "espectador" && !estadoBandos.blancasOcupado) {
+    } else if (estadoBandos.negrasOcupado && !estadoBandos.blancasOcupado) {
       bandoAsignado = "blancas";
       selectorBando.value = "blancas";
       socket.emit('solicitar-bando', "blancas");
     }
-  } else {
-    opcionNegras.disabled = false;
-    opcionNegras.textContent = "Piezas Negras ⚫";
   }
 
-    // LÓGICA DEL GIRO AUTOMÁTICO DE CÁMARA
+  // LÓGICA DEL GIRO AUTOMÁTICO DE CÁMARA
   const elementoTablero = document.getElementById('tablero');
   if (bandoAsignado === "negras") {
     elementoTablero.classList.add('tablero-volteado'); 
   } else {
     elementoTablero.classList.remove('tablero-volteado');
   }
-}); // Fin de la antena
+});// Fin de la antena
