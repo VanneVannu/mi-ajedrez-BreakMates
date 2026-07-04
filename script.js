@@ -28,6 +28,8 @@ btnEntrarSala.addEventListener('click', () => {
 
   // 2. Conectarse formalmente a la habitación digital en el servidor
   socket.emit('unirse-a-sala', nombreSala);
+  actualizarBrilloRelojes();
+
 });
 
 // Permitir entrar a la sala presionando también Enter en el teclado
@@ -123,6 +125,79 @@ selectorBando.addEventListener('change', (e) => {
   socket.emit('solicitar-bando', bandoDeseado);
 });
 
+// ==========================================
+// --- VARIABLES DEL TEMPORIZADOR NEÓN ---
+// ==========================================
+let tiempoBlancas = 300; // 5 minutos en segundos (5 * 60)
+let tiempoNegras = 300;
+let intervaloReloj = null; // Guardará el segundero de JavaScript
+
+const txtTiempoBlancas = document.getElementById('tiempo-blancas');
+const txtTiempoNegras = document.getElementById('tiempo-negras');
+const bloqueBlancas = document.getElementById('bloque-reloj-blancas');
+const bloqueNegras = document.getElementById('bloque-reloj-negras');
+
+// Función para alternar el brillo neón cian en la pantalla
+function actualizarBrilloRelojes() {
+  if (juegoTerminado) {
+    bloqueBlancas.classList.remove('activo');
+    bloqueNegras.classList.remove('activo');
+    return;
+  }
+  if (turnoActual === "blancas") {
+    bloqueBlancas.classList.add('activo');
+    bloqueNegras.classList.remove('activo');
+  } else {
+    bloqueNegras.classList.add('activo');
+    bloqueBlancas.classList.remove('activo');
+  }
+}
+
+// Función matemática para transformar segundos en formato de texto digital (05:00)
+function formatearTiempo(segundos) {
+  const min = Math.floor(segundos / 60);
+  const seg = segundos % 60;
+  return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
+}
+
+// El motor que descuenta 1 segundo cada 1000 milisegundos
+function iniciarSegundero() {
+  clearInterval(intervaloReloj); // Limpiar cualquier reloj viejo encendido
+  actualizarBrilloRelojes();
+
+  intervaloReloj = setInterval(() => {
+    if (juegoTerminado) {
+      clearInterval(intervaloReloj);
+      return;
+    }
+
+    if (turnoActual === "blancas") {
+      tiempoBlancas--;
+      txtTiempoBlancas.textContent = formatearTiempo(tiempoBlancas);
+      if (tiempoBlancas <= 0) declararVictoriaPorTiempo("negras");
+    } else {
+      tiempoNegras--;
+      txtTiempoNegras.textContent = formatearTiempo(tiempoNegras);
+      if (tiempoNegras <= 0) declararVictoriaPorTiempo("blancas");
+    }
+  }, 1000);
+}
+
+// Detiene el juego si el marcador digital llega a 00:00
+function declararVictoriaPorTiempo(ganador) {
+  juegoTerminado = true;
+  clearInterval(intervaloReloj);
+  actualizarBrilloRelojes();
+  indicadorTurno.textContent = "PARTIDA TERMINADA";
+  
+  mensajeGanador.textContent = ganador === "blancas" 
+    ? "¡Ganaron las piezas BLANCAS por tiempo!" 
+    : "¡Ganaron las piezas NEGRAS por tiempo!";
+    
+  pantallaVictoria.classList.remove('oculto');
+}
+
+
 //PARTE 2 DE 3: Reglas del Ajedrez y Estado Inicial
 
 const piezasBlancas = ["♙", "♖", "♘", "♗", "♕", "♔"];
@@ -146,6 +221,7 @@ const cementerioNegras = document.getElementById('capturadas-negras');
 const pantallaVictoria = document.getElementById('pantalla-victoria');
 const mensajeGanador = document.getElementById('mensaje-ganador');
 
+// Temporizador
 btnReiniciar.addEventListener('click', () => {
   casillas.forEach((casilla, index) => {
     casilla.textContent = estadoInicial[index];
@@ -163,8 +239,19 @@ btnReiniciar.addEventListener('click', () => {
   selectorBando.value = "espectador"; 
   bandoAsignado = "espectador";
 
+  // --- NUEVO: ESTAS SON LAS LÍNEAS DE RESETEO DEL TIEMPO ---
+  clearInterval(intervaloReloj); // Apaga el segundero si estaba corriendo
+  tiempoBlancas = 300;           // Regresa el contador a 5 minutos
+  tiempoNegras = 300;            // Regresa el contador a 5 minutos
+  txtTiempoBlancas.textContent = "05:00"; // Cambia el texto en pantalla
+  txtTiempoNegras.textContent = "05:00";  // Cambia el texto en pantalla
+  actualizarBrilloRelojes();     // Apaga las luces cian neón de los relojes
+  // --------------------------------------------------------
+
+  // Avisar al servidor (esta línea ya existía)
   socket.emit('solicitar-reinicio');
 });
+
 
 function validarMovimientoPeon(fOrigen, cOrigen, fDestino, cDestino, pieza, esCasillaVacia) {
   const difFila = fDestino - fOrigen;
@@ -295,11 +382,15 @@ casillas.forEach(casilla => {
       if (movimientoValido) {
         ejecutarMovimientoLogico(fOri, cOri, fClick, cClick);
         
-        // Enviamos el movimiento agregando la firma de quién lo originó
+         // MODIFICADO: Enviamos el movimiento agregando bando y tiempos actuales
         socket.emit('movimiento-ajedrez', {
           fOri: fOri, cOri: cOri, fDes: fClick, cDes: cClick,
-          bandoRemitente: bandoAsignado
+          bandoRemitente: bandoAsignado,
+          tBlancas: tiempoBlancas, // <-- NUEVA LÍNEA
+          tNegras: tiempoNegras    // <-- NUEVA LÍNEA
         });
+        iniciarSegundero(); // <-- NUEVA LÍNEA: Activa el reloj localmente de inmediato
+
       }
     }
   });
@@ -345,13 +436,23 @@ function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
 // --- RECEPTORES INALÁMBRICOS DE SOCKETS ---
 // ==========================================
 
-// --- 1. RECEPTOR DE MOVIMIENTOS CON FILTRO ---
+// --- 1. RECEPTOR DE MOVIMIENTOS Y TIEMPOS CON FILTRO ---
 socket.on('oponente-movio', (datos) => {
-  if (datos.bandoRemitente === bandoAsignado) return; // Filtro espejo (ignora jugada propia)
+  if (datos.bandoRemitente === bandoAsignado) return; // Filtro espejo
+  
+  // Sincronizar el tiempo exacto que le quedaba al oponente según el servidor
+  if (datos.tBlancas !== undefined) {
+    tiempoBlancas = datos.tBlancas;
+    tiempoNegras = datos.tNegras;
+    txtTiempoBlancas.textContent = formatearTiempo(tiempoBlancas);
+    txtTiempoNegras.textContent = formatearTiempo(tiempoNegras);
+  }
+
   moverPiezaEnPantalla(datos.fOri, datos.cOri, datos.fDes, datos.cDes);
+  iniciarSegundero(); // Encender el reloj del jugador al que le toca mover ahora
 });
 
-// --- 2. RECEPTOR DE REINICIOS ---
+// --- 2. RECEPTOR DE REINICIOS Y RESETEO DE RELOJES ---
 socket.on('oponente-reinicio', () => {
   casillas.forEach((casilla, index) => {
     casilla.textContent = estadoInicial[index];
@@ -366,6 +467,14 @@ socket.on('oponente-reinicio', () => {
   pantallaVictoria.classList.add('oculto');
   selectorBando.value = "espectador"; 
   bandoAsignado = "espectador";
+  
+  // RESETEAR VARIABLES DE TIEMPO
+  clearInterval(intervaloReloj);
+  tiempoBlancas = 300;
+  tiempoNegras = 300;
+  txtTiempoBlancas.textContent = "05:00";
+  txtTiempoNegras.textContent = "05:00";
+  actualizarBrilloRelojes();
   
   alert("La partida ha sido reiniciada.");
 });
