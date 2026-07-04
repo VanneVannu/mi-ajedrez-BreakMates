@@ -357,14 +357,20 @@ socket.on('oponente-reinicio', () => {
   alert("La partida ha sido reiniciada.");
 });
 
-// --- 3. RECEPTOR DE CHAT CON FILTRO ---
+// --- 3. RECEPTOR DE CHAT MULTICOLOR CORREGIDO ---
 socket.on('recibir-mensaje', (datosRecibidos) => {
+  // Capturamos nuestro propio apodo para comparar
   const miApodoActual = entradaApodo.value.trim() || "Anónimo";
   const miBandoTexto = bandoAsignado === "blancas" ? "⚪" : (bandoAsignado === "negras" ? "⚫" : "👁️");
   const miFirmaCompleta = `${miBandoTexto} ${miApodoActual}`;
 
-  if (datosRecibidos.remitente === miFirmaCompleta) return; // Filtro espejo (ignora chat propio)
-  agregarMensajeAlCuadro(datosRecibidos, "oponente");
+  // Si el mensaje es mío, le ponemos la clase "yo" para que salga a la derecha,
+  // pero NO lo ignoramos, permitiendo que use el color neón del servidor.
+  if (datosRecibidos.remitente === miFirmaCompleta) {
+    agregarMensajeAlCuadro(datosRecibidos, "yo");
+  } else {
+    agregarMensajeAlCuadro(datosRecibidos, "oponente");
+  }
 });
 
 // --- 4. RECEPTOR DE EMPAREJAMIENTO AUTOMÁTICO Y GIRO DE TABLERO ---
