@@ -530,3 +530,15 @@ body {
 
 /*-------------------------------------------------------*/
  
+/* --- CORRECCIÓN DE CONTRASTE PARA OPCIONES OCUPADAS --- */
+#selector-bando option:disabled {
+  color: rgba(255, 255, 255, 0.35) !important; /* Texto gris claro con transparencia para que sea legible pero se note bloqueado */
+  background-color: #1a0b1e !important; /* Fondo morado oscuro cyberpunk para que resalte en la lista */
+  text-shadow: none !important;
+}
+
+/* Estilo para las opciones normales dentro de la lista desplegable */
+#selector-bando option {
+  background-color: #0d0c1d !important; /* Asegura fondo oscuro para las demás opciones */
+  color: #fff !important;
+}
