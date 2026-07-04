@@ -32,8 +32,28 @@ io.on('connection', (socket) => {
     socket.join(nombreSala); // Meter al jugador a la habitación digital oficial
 
     if (!salasOcupadas[nombreSala]) {
-      // Agregamos un contador para ir rotando los colores (0 a 5)
-      salasOcupadas[nombreSala] = { blancas: null, negras: null, contadorColor: 0 };
+      // Agregamos estadoTablero y los tiempos iniciales al registro de la sala
+      salasOcupadas[nombreSala] = { 
+        blancas: null, 
+        negras: null, 
+        contadorColor: 0,
+        estadoTablero: null, // Guardará la foto de las piezas
+        tBlancas: 300,
+        tNegras: 300,
+        partidaIniciada: false,
+        turnoActual: "blancas"
+      };
+    }
+
+    // NUEVO: Si la sala ya tenía una partida en curso, le enviamos la foto en vivo al espectador que entra
+    if (salasOcupadas[nombreSala].estadoTablero) {
+      socket.emit('sincronizar-partida-espectador', {
+        tablero: salasOcupadas[nombreSala].estadoTablero,
+        tBlancas: salasOcupadas[nombreSala].tBlancas,
+        tNegras: salasOcupadas[nombreSala].tNegras,
+        partidaIniciada: salasOcupadas[nombreSala].partidaIniciada,
+        turnoActual: salasOcupadas[nombreSala].turnoActual
+      });
     }
 
     // LE ASIGNAMOS UN COLOR ÚNICO A ESTE SOCKET ESPECÍFICO
@@ -76,21 +96,35 @@ io.on('connection', (socket) => {
     });
   });
 
-   // --- 3. RETRANSMITIR MOVIMIENTOS Y TIEMPOS DE FORMA INFALIBLE ---
+    // --- 3. Retransmitir movimientos y guardar la foto del estado actual ---
   socket.on('movimiento-ajedrez', (datosMovimiento) => {
-    if (socket.miSalaActual) {
-      // Retransmitimos el movimiento incluyendo los tiempos que le llegaron del cliente
-      io.to(socket.miSalaActual).emit('oponente-movio', datosMovimiento);
+    const salaNombre = socket.miSalaActual;
+    if (salaNombre && salasOcupadas[salaNombre]) {
+      // Guardamos la foto en la memoria del servidor
+      salasOcupadas[salaNombre].estadoTablero = datosMovimiento.fotoTablero;
+      salasOcupadas[salaNombre].tBlancas = datosMovimiento.tBlancas;
+      salasOcupadas[salaNombre].tNegras = datosMovimiento.tNegras;
+      salasOcupadas[salaNombre].partidaIniciada = true;
+      // Alternamos el turno en el servidor para el nuevo espectador
+      salasOcupadas[salaNombre].turnoActual = datosMovimiento.bandoRemitente === "blancas" ? "negras" : "blancas";
+
+      io.to(salaNombre).emit('oponente-movio', datosMovimiento);
     }
   });
+
 
   // --- 4. Retransmitir reinicios con io.to ---
-  socket.on('solicitar-reinicio', () => {
-    if (socket.miSalaActual) {
-      io.to(socket.miSalaActual).emit('oponente-reinicio');
+    socket.on('solicitar-reinicio', () => {
+    const salaNombre = socket.miSalaActual;
+    if (salaNombre && salasOcupadas[salaNombre]) {
+      salasOcupadas[salaNombre].estadoTablero = null;
+      salasOcupadas[salaNombre].tBlancas = 300;
+      salasOcupadas[salaNombre].tNegras = 300;
+      salasOcupadas[salaNombre].partidaIniciada = false;
+      salasOcupadas[salaNombre].turnoActual = "blancas";
+      io.to(salaNombre).emit('oponente-reinicio');
     }
   });
-
 
 
   // --- 5. Retransmitir mensajes del chat inyectando el color neón de forma infalible ---
