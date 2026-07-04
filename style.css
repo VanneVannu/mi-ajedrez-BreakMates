@@ -369,22 +369,22 @@ body {
 /*-------------------------------------------------------*/
 /*Bloque donde se obliga a alinear-----------------------*/
 
-/* --- ALINEACIÓN SIMÉTRICA DE LA BARRA SUPERIOR (CORREGIDA) --- */
+/* --- ALINEACIÓN SIMÉTRICA DE LA BARRA SUPERIOR (ESTRUCTURA DE FILA) --- */
 #interfaz {
   display: flex !important;
   flex-direction: row !important;
-  align-items: flex-end !important; /* Alinea los elementos por su base inferior */
-  justify-content: center !important; /* Centra el contenido horizontalmente */
-  gap: 35px !important; /* Espacio limpio entre secciones */
+  align-items: center !important; /* Centra el Turno con respecto a todo el bloque de controles */
+  justify-content: center !important; 
+  gap: 40px !important; 
   padding: 15px 0 !important;
-  background-color: transparent !important; /* BORRAMOS EL CUADRO EXTRAÑO */
+  background-color: transparent !important;
   border-bottom: 1px solid rgba(92, 19, 79, 0.3);
 }
 
 #contenedor-controles {
   display: flex !important;
   flex-direction: row !important;
-  align-items: flex-end !important; /* Alinea los inputs por su base */
+  align-items: flex-end !important; /* Fuerza a las tres cajas (inputs y botón) a nivelar sus bases al milímetro */
   gap: 25px !important;
 }
 
@@ -395,16 +395,6 @@ body {
   gap: 6px !important;
 }
 
-/* Nivelar el indicador de turno de la izquierda con las cajas */
-#marcador-turno {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 4px !important;
-  margin-bottom: 2px !important; /* Pequeño ajuste para nivelar el texto con la base de los inputs */
-}
-
-/* Unificar el estilo de los textos de guía */
 #marcador-turno,
 .control-grupo label {
   color: #00f0ff !important;
@@ -415,24 +405,21 @@ body {
   margin-bottom: 0 !important;
 }
 
-/* Forzar a que los inputs, el select y el botón midan exactamente lo mismo de alto */
+/* Forzar tamaño idéntico en altura y quitar márgenes extraños */
 #entrada-apodo,
 #selector-bando,
 #btn-reiniciar {
   height: 40px !important;
   box-sizing: border-box !important;
+  margin: 0 !important; /* Borra cualquier margen viejo de arriba que lo desalineaba */
 }
 
 #btn-reiniciar {
-  margin-top: 0 !important;
-  margin-bottom: 3px !important; /* TRUCO: Margen inferior para levantarlo y dejarlo alineado al milímetro */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 40px !important;
-  box-sizing: border-box !important;
+  padding: 0 20px !important;
 }
-
 
 
 /* --- ROTACIÓN INDESTRUCTIBLE DEL TABLERO --- */
