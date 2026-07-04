@@ -424,12 +424,15 @@ body {
 }
 
 #btn-reiniciar {
-  margin-top: 0 !important; /* ¡QUÍTAME EL MARGEN QUE LO DESCOLGABA! */
-  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 3px !important; /* TRUCO: Margen inferior para levantarlo y dejarlo alineado al milímetro */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  height: 40px !important;
+  box-sizing: border-box !important;
 }
+
 
 
 /* --- ROTACIÓN INDESTRUCTIBLE DEL TABLERO --- */
