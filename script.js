@@ -354,6 +354,14 @@ function verificarFinDePartido(piezaCapturada) {
 // --- LÓGICA DE SELECCIÓN Y MOVIMIENTO EN PANTALLA ---
 casillas.forEach(casilla => {
   casilla.addEventListener('click', (e) => {
+
+    // --- NUEVO FILTRO DE SEGURIDAD: CANCHADO DEL TABLERO ---
+    // Si la partida aún no inicia formalmente con el botón verde, ignoramos cualquier clic en el tablero
+    if (!partidaIniciada) {
+      alert("Debes presionar el botón 'Iniciar Partida' verde antes de poder mover las piezas.");
+      return; 
+    }
+    
     if (juegoTerminado || bandoAsignado === "espectador") return;
 
     const fClick = parseInt(e.currentTarget.getAttribute('data-fila'));
