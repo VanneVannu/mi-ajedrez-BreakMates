@@ -222,10 +222,22 @@ const estadoInicial = [
 const casillas = document.querySelectorAll('.casilla');
 const indicadorTurno = document.getElementById('bando-actual');
 const btnReiniciar = document.getElementById('btn-reiniciar');
+const btnIniciarPartida = document.getElementById('btn-iniciar-partida');
 const cementerioBlancas = document.getElementById('capturadas-blancas');
 const cementerioNegras = document.getElementById('capturadas-negras');
 const pantallaVictoria = document.getElementById('pantalla-victoria');
 const mensajeGanador = document.getElementById('mensaje-ganador');
+
+// Evento local para arrancar la partida
+btnIniciarPartida.addEventListener('click', () => {
+  // Solo los jugadores reales pueden dar inicio (opcional, si quieres que espectadores también puedan, quita el bandoAsignado)
+  if (bandoAsignado === "espectador") {
+    alert("Solo los jugadores pueden iniciar el temporizador.");
+    return;
+  }
+  socket.emit('solicitar-inicio-partida');
+});
+
 
 // Temporizador
 btnReiniciar.addEventListener('click', () => {
@@ -256,6 +268,10 @@ btnReiniciar.addEventListener('click', () => {
   // --------------------------------------------------------
   partidaIniciada = false; // <-- ¡NUEVA LÍNEA AQUÍ! Pausa el reloj localmente
   // -------------------------------------------------------------
+
+   // --- Vuelve a mostrar el botón verde localmente ---
+  btnIniciarPartida.classList.remove('oculto'); 
+  // -----------------------------------------------------------------
 
   // Avisar al servidor 
   socket.emit('solicitar-reinicio');
@@ -392,7 +408,7 @@ casillas.forEach(casilla => {
         ejecutarMovimientoLogico(fOri, cOri, fClick, cClick);
         
         // ACTIVAMOS LA PARTIDA
-        partidaIniciada = true; 
+        //partidaIniciada = true; 
 
         // --- NUEVO: Capturar una foto instantánea del estado de las 64 casillas ---
         const fotoActual = Array.from(casillas).map(c => c.textContent);
@@ -497,6 +513,10 @@ socket.on('oponente-reinicio', () => {
   
   partidaIniciada = false; // <-- ¡NUEVA LÍNEA AQUÍ TAMBIÉN! Pausa el reloj remoto
 
+   // --- Vuelve a mostrar el botón verde para el jugador remoto ---
+  btnIniciarPartida.classList.remove('oculto');
+  // --------------------------------------------------------------------------
+
   alert("La partida ha sido reiniciada.");
 });
 
@@ -563,7 +583,7 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
   }
 });// Fin de la antena
 
-// --- RECEPTOR EN SCRIPT.JS PARA ESPECTADORES QUE ENTRAN TARDE ---
+// --- 5. RECEPTOR EN SCRIPT.JS PARA ESPECTADORES QUE ENTRAN TARDE ---
 socket.on('sincronizar-partida-espectador', (datos) => {
   // 1. Dibujar el tablero en la posición exacta usando tu propiedad .tablero
   if (datos.tablero) {
@@ -585,5 +605,13 @@ socket.on('sincronizar-partida-espectador', (datos) => {
   // 4. Activar los interruptores y encender el segundero en vivo
   partidaIniciada = datos.partidaIniciada;
   iniciarSegundero();
+  
+});
+
+// --- 6. NUEVO: RECEPTOR PARA ARRANCAR EL TEMPORIZADOR AL MISMO TIEMPO ---
+socket.on('servidor-inicio-partida', () => {
+  partidaIniciada = true;
+  btnIniciarPartida.classList.add('oculto'); // Esconde el botón verde de la barra superior
+  iniciarSegundero(); // Despierta el reloj de las blancas en perfecta sincronía
 });
 
