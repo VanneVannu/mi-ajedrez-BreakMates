@@ -390,6 +390,9 @@ body {
 
 #btn-entrar-sala:hover { transform: scale(1.03); }
 
+
+/*Bloque de importantes */
+
 /* --- ESTILOS PARA LOS TEMPORIZADORES NEÓN --- */
 #contenedor-relojes {
   display: flex !important;
@@ -541,4 +544,31 @@ body {
 #selector-bando option {
   background-color: #0d0c1d !important; /* Asegura fondo oscuro para las demás opciones */
   color: #fff !important;
+}
+
+/* --- ESTILO PARA EL BOTÓN INICIAR PARTIDA CENTRAL --- */
+#btn-iniciar-partida {
+  background-color: #39ff14 !important; /* Verde Neón */
+  color: #000 !important; /* Texto negro de alto contraste */
+  font-weight: bold !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 0 15px !important;
+  height: 50px !important; /* Un poco más alto para que calce estéticamente con los bloques de los relojes */
+  align-self: center !important; /* Truco flexbox: se centra verticalmente en la fila de los relojes */
+  cursor: pointer !important;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.4) !important;
+  transition: transform 0.1s, box-shadow 0.1s !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px !important;
+}
+
+#btn-iniciar-partida:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.7) !important;
+}
+
+/* Ocultar el botón limpiamente cuando la partida ya esté en curso */
+#btn-iniciar-partida.oculto {
+  display: none !important;
 }
