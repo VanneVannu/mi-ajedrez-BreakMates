@@ -163,6 +163,19 @@ io.on('connection', (socket) => {
     }
     console.log('Un jugador se ha desconectado.', socket.id);
   });
+
+    // --7. NUEVO: Escuchar cuando un jugador inicia la partida formalmente ---
+  socket.on('solicitar-inicio-partida', () => {
+    const salaNombre = socket.miSalaActual;
+    if (salaNombre && salasOcupadas[salaNombre]) {
+      // Guardamos en la memoria del servidor que el tiempo ya está corriendo
+      salasOcupadas[salaNombre].partidaIniciada = true;
+      
+      // Avisamos a todos en la sala que enciendan sus segunderos
+      io.to(salaNombre).emit('servidor-inicio-partida');
+    }
+  });
+
 });
 
 // Arrancar el servidor en el puerto 3000
