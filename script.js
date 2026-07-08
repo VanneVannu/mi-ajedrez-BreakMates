@@ -14,6 +14,8 @@ const pantallaLobby = document.getElementById('pantalla-lobby');
 const contenedorPrincipal = document.getElementById('contenedor-principal');
 const entradaSala = document.getElementById('entrada-sala');
 const btnEntrarSala = document.getElementById('btn-entrar-sala');
+const btnCrearCodigoSala = document.getElementById('btn-crear-codigo-sala');
+const txtSalaActual = document.getElementById('txt-sala-actual');
 
 btnEntrarSala.addEventListener('click', () => {
   const nombreSala = entradaSala.value.trim().toLowerCase();
@@ -27,6 +29,9 @@ btnEntrarSala.addEventListener('click', () => {
   pantallaLobby.classList.add('oculto');
   contenedorPrincipal.classList.remove('oculto');
 
+   // NUEVO: Imprimir el código arriba al unirte a la sala de tu oponente
+  txtSalaActual.textContent = `SALA: ${nombreSala.toUpperCase()}`;
+
   // 2. Conectarse formalmente a la habitación digital en el servidor
   socket.emit('unirse-a-sala', nombreSala);
   actualizarBrilloRelojes();
@@ -37,6 +42,33 @@ btnEntrarSala.addEventListener('click', () => {
 entradaSala.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') btnEntrarSala.click();
 });
+
+// Función para generar un código único de 5 letras Cyberpunk
+function generarCodigoSala() {
+  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let resultado = '';
+  for (let i = 0; i < 5; i++) {
+    resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+  }
+  return resultado;
+}
+
+// Evento para el jugador que fabrica la sala privada
+btnCrearCodigoSala.addEventListener('click', () => {
+  const codigoInventado = "sala-" + generarCodigoSala();
+  
+  // 1. Ocultar el lobby y mostrar el tablero
+  pantallaLobby.classList.add('oculto');
+  contenedorPrincipal.classList.remove('oculto');
+
+  // 2. Imprimir el código arriba para que puedas copiarlo y mandárselo a tu amigo
+  txtSalaActual.textContent = `SALA: ${codigoInventado.toUpperCase()}`;
+
+  // 3. Viajar inalámbricamente al servidor
+  socket.emit('unirse-a-sala', codigoInventado);
+  actualizarBrilloRelojes();
+});
+
 
 // --- CAPTURAR ELEMENTOS DEL CHAT EN VIVO ---
 const mensajesChat = document.getElementById('mensajes-chat');
@@ -361,7 +393,7 @@ casillas.forEach(casilla => {
       alert("Debes presionar el botón 'Iniciar Partida' verde antes de poder mover las piezas.");
       return; 
     }
-    
+
     if (juegoTerminado || bandoAsignado === "espectador") return;
 
     const fClick = parseInt(e.currentTarget.getAttribute('data-fila'));
@@ -622,4 +654,3 @@ socket.on('servidor-inicio-partida', () => {
   btnIniciarPartida.classList.add('oculto'); // Esconde el botón verde de la barra superior
   iniciarSegundero(); // Despierta el reloj de las blancas en perfecta sincronía
 });
-
