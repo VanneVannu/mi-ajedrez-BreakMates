@@ -31,7 +31,7 @@ btnEntrarSala.addEventListener('click', () => {
 
    // NUEVO: Imprimir el código arriba al unirte a la sala de tu oponente
    txtSalaActual.textContent = nombreSala.toUpperCase();
-   
+
   // 2. Conectarse formalmente a la habitación digital en el servidor
   socket.emit('unirse-a-sala', nombreSala);
   actualizarBrilloRelojes();
@@ -62,7 +62,7 @@ btnCrearCodigoSala.addEventListener('click', () => {
   contenedorPrincipal.classList.remove('oculto');
 
   // 2. Imprimir el código arriba para que puedas copiarlo y mandárselo a tu amigo
-  txtSalaActual.textContent = `SALA: ${codigoInventado.toUpperCase()}`;
+  txtSalaActual.textContent = codigoInventado.toUpperCase(); 
 
   // 3. Viajar inalámbricamente al servidor
   socket.emit('unirse-a-sala', codigoInventado);
