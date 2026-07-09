@@ -17,7 +17,37 @@ const btnEntrarSala = document.getElementById('btn-entrar-sala');
 const btnCrearCodigoSala = document.getElementById('btn-crear-codigo-sala');
 const txtSalaActual = document.getElementById('txt-sala-actual');
 
+
+// Función para generar un código único de 5 letras Cyberpunk
+function generarCodigoSala() {
+  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let resultado = '';
+  for (let i = 0; i < 5; i++) {
+    resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+  }
+  return resultado;
+}
+
+// 1) Evento para el jugador que fabrica la sala privada
+btnCrearCodigoSala.addEventListener('click', () => {
+  // Generamos un código limpio de 5 letras (Ej: X7QZT)
+  const codigoInventado = generarCodigoSala().toLowerCase();
+  
+  // 1. Ocultar el lobby y mostrar el tablero
+  pantallaLobby.classList.add('oculto');
+  contenedorPrincipal.classList.remove('oculto');
+
+  // 2. Imprimir el código arriba para que puedas copiarlo y mandárselo a tu amigo
+  txtSalaActual.textContent = codigoInventado.toUpperCase(); 
+
+  // 3. Viajar inalámbricamente al servidor
+  socket.emit('unirse-a-sala', codigoInventado);
+  actualizarBrilloRelojes();
+});
+
+// 2) EVENTO PARA EL JUGADOR QUE SE UNE ESCRIBIENDO EL CÓDIGO
 btnEntrarSala.addEventListener('click', () => {
+  // Limpiamos espacios y pasamos a minúsculas para evitar desajustes
   const nombreSala = entradaSala.value.trim().toLowerCase();
   
   if (nombreSala === "") {
@@ -38,35 +68,9 @@ btnEntrarSala.addEventListener('click', () => {
 
 });
 
-// Permitir entrar a la sala presionando también Enter en el teclado
+// 3) Permitir entrar a la sala presionando también Enter en el teclado
 entradaSala.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') btnEntrarSala.click();
-});
-
-// Función para generar un código único de 5 letras Cyberpunk
-function generarCodigoSala() {
-  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let resultado = '';
-  for (let i = 0; i < 5; i++) {
-    resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-  }
-  return resultado;
-}
-
-// Evento para el jugador que fabrica la sala privada
-btnCrearCodigoSala.addEventListener('click', () => {
-  const codigoInventado = "sala-" + generarCodigoSala();
-  
-  // 1. Ocultar el lobby y mostrar el tablero
-  pantallaLobby.classList.add('oculto');
-  contenedorPrincipal.classList.remove('oculto');
-
-  // 2. Imprimir el código arriba para que puedas copiarlo y mandárselo a tu amigo
-  txtSalaActual.textContent = codigoInventado.toUpperCase(); 
-
-  // 3. Viajar inalámbricamente al servidor
-  socket.emit('unirse-a-sala', codigoInventado);
-  actualizarBrilloRelojes();
 });
 
 
@@ -504,6 +508,7 @@ function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
   ejecutarMovimientoLogico(fOri, cOri, fDes, cDes);
 }
 
+
 // =======================================================
 // --- RECEPTORES INALÁMBRICOS DE SOCKETS REVISADOS ---
 // =======================================================
@@ -632,5 +637,4 @@ socket.on('servidor-inicio-partida', () => {
   btnIniciarPartida.classList.add('oculto'); 
   iniciarSegundero(); 
 });
-
 
