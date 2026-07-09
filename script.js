@@ -504,18 +504,15 @@ function moverPiezaEnPantalla(fOri, cOri, fDes, cDes) {
   ejecutarMovimientoLogico(fOri, cOri, fDes, cDes);
 }
 
+// =======================================================
+// --- RECEPTORES INALÁMBRICOS DE SOCKETS REVISADOS ---
+// =======================================================
 
-// ==========================================
-// --- RECEPTORES INALÁMBRICOS DE SOCKETS ---
-// ==========================================
-
-// --- 1. RECEPTOR DE MOVIMIENTOS Y TIEMPOS CON FILTRO ---
+// --- 1. RECEPTOR DE MOVIMIENTOS CON FILTRO ESPEJO ---
 socket.on('oponente-movio', (datos) => {
-  if (datos.bandoRemitente === bandoAsignado) return; // Filtro espejo
+  if (datos.bandoRemitente === bandoAsignado) return; // Ignora jugada propia
   
- partidaIniciada = true; // NUEVO: Enciende el reloj en la pantalla del rival al recibir el tiro
-
-  // Sincronizar el tiempo exacto que le quedaba al oponente según el servidor
+  // Sincronizar tiempos si viajan en la red
   if (datos.tBlancas !== undefined) {
     tiempoBlancas = datos.tBlancas;
     tiempoNegras = datos.tNegras;
@@ -524,10 +521,13 @@ socket.on('oponente-movio', (datos) => {
   }
 
   moverPiezaEnPantalla(datos.fOri, datos.cOri, datos.fDes, datos.cDes);
-  iniciarSegundero(); // Encender el reloj del jugador al que le toca mover ahora
+  
+  // Forzamos el encendido de los relojes si la partida ya está en curso
+  partidaIniciada = true; 
+  iniciarSegundero(); 
 });
 
-// --- 2. RECEPTOR DE REINICIOS Y RESETEO DE RELOJES ---
+// --- 2. RECEPTOR DE REINICIOS ---
 socket.on('oponente-reinicio', () => {
   casillas.forEach((casilla, index) => {
     casilla.textContent = estadoInicial[index];
@@ -543,33 +543,24 @@ socket.on('oponente-reinicio', () => {
   selectorBando.value = "espectador"; 
   bandoAsignado = "espectador";
   
-  // RESETEAR VARIABLES DE TIEMPO
   clearInterval(intervaloReloj);
   tiempoBlancas = 300;
   tiempoNegras = 300;
   txtTiempoBlancas.textContent = "05:00";
   txtTiempoNegras.textContent = "05:00";
   actualizarBrilloRelojes();
+  partidaIniciada = false;
+  btnIniciarPartida.classList.remove('oculto'); // Reaparece botón verde
   
-  partidaIniciada = false; // <-- ¡NUEVA LÍNEA AQUÍ TAMBIÉN! Pausa el reloj remoto
-
-   // --- Vuelve a mostrar el botón verde para el jugador remoto ---
-  btnIniciarPartida.classList.remove('oculto');
-  // --------------------------------------------------------------------------
-
   alert("La partida ha sido reiniciada.");
 });
 
-
-// --- 3. RECEPTOR DE CHAT MULTICOLOR CORREGIDO ---
+// --- 3. RECEPTOR DE CHAT MULTICOLOR ---
 socket.on('recibir-mensaje', (datosRecibidos) => {
-  // Capturamos nuestro propio apodo para comparar
   const miApodoActual = entradaApodo.value.trim() || "Anónimo";
   const miBandoTexto = bandoAsignado === "blancas" ? "⚪" : (bandoAsignado === "negras" ? "⚫" : "👁️");
   const miFirmaCompleta = `${miBandoTexto} ${miApodoActual}`;
 
-  // Si el mensaje es mío, le ponemos la clase "yo" para que salga a la derecha,
-  // pero NO lo ignoramos, permitiendo que use el color neón del servidor.
   if (datosRecibidos.remitente === miFirmaCompleta) {
     agregarMensajeAlCuadro(datosRecibidos, "yo");
   } else {
@@ -577,13 +568,11 @@ socket.on('recibir-mensaje', (datosRecibidos) => {
   }
 });
 
-
-// --- 4. RECEPTOR DE EMPAREJAMIENTO AUTOMÁTICO Y GIRO DE TABLERO CORREGIDO ---
+// --- 4. RECEPTOR DE EMPAREJAMIENTO AUTOMÁTICO Y GIRO ---
 socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
   const opcionBlancas = selectorBando.querySelector('option[value="blancas"]');
   const opcionNegras = selectorBando.querySelector('option[value="negras"]');
 
-  // GESTIÓN INDEPENDIENTE DE PIEZAS BLANCAS
   if (estadoBandos.blancasOcupado) {
     opcionBlancas.textContent = bandoAsignado === "blancas" ? "Blancas (♙) - Tuyo" : "Blancas (♙) - Ocupado";
     if (bandoAsignado !== "blancas") opcionBlancas.disabled = true;
@@ -592,7 +581,6 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     opcionBlancas.textContent = "Blancas (♙)";
   }
 
-  // GESTIÓN INDEPENDIENTE DE PIEZAS NEGRAS (Corregido para forzar el bloqueo)
   if (estadoBandos.negrasOcupado) {
     opcionNegras.textContent = bandoAsignado === "negras" ? "Negras (♟) - Tuyo" : "Negras (♟) - Ocupado";
     if (bandoAsignado !== "negras") opcionNegras.disabled = true;
@@ -601,56 +589,48 @@ socket.on('actualizar-bandos-ocupados', (estadoBandos) => {
     opcionNegras.textContent = "Negras (♟)";
   }
 
-  // AUTO-ASIGNACIÓN AUTOMÁTICA SI ERES EL SEGUNDO EN ENTRAR
-  if (bandoAsignado === "espectador") {
-    if (estadoBandos.blancasOcupado && !estadoBandos.negrasOcupado) {
-      bandoAsignado = "negras";
-      selectorBando.value = "negras";
-      socket.emit('solicitar-bando', "negras");
-    } else if (estadoBandos.negrasOcupado && !estadoBandos.blancasOcupado) {
-      bandoAsignado = "blancas";
-      selectorBando.value = "blancas";
-      socket.emit('solicitar-bando', "blancas");
-    }
-  }
-
-  // LÓGICA DEL GIRO AUTOMÁTICO DE CÁMARA
   const elementoTablero = document.getElementById('tablero');
   if (bandoAsignado === "negras") {
     elementoTablero.classList.add('tablero-volteado'); 
   } else {
     elementoTablero.classList.remove('tablero-volteado');
   }
-});// Fin de la antena
+});
 
-// --- 5. RECEPTOR EN SCRIPT.JS PARA ESPECTADORES QUE ENTRAN TARDE ---
+// --- 5. RECEPTOR CLAVE PARA ESPECTADORES Y SEGUNDOS JUGADORES QUE ENTRAN TARDE ---
 socket.on('sincronizar-partida-espectador', (datos) => {
-  // 1. Dibujar el tablero en la posición exacta usando tu propiedad .tablero
+  console.log("¡Señal de sincronización recibida en el cliente!", datos);
+  
+  // Redibujar el tablero con la foto guardada en el servidor
   if (datos.tablero) {
     casillas.forEach((casilla, index) => {
       casilla.textContent = datos.tablero[index];
     });
   }
   
-  // 2. Sincronizar los segundos de los cronómetros neón
+  // Sincronizar tiempos exactos del servidor
   tiempoBlancas = datos.tBlancas;
   tiempoNegras = datos.tNegras;
   txtTiempoBlancas.textContent = formatearTiempo(tiempoBlancas);
   txtTiempoNegras.textContent = formatearTiempo(tiempoNegras);
   
-  // 3. Sincronizar el turno actual en la barra superior
+  // Sincronizar turno actual e interruptores de juego
   turnoActual = datos.turnoActual;
   indicadorTurno.textContent = turnoActual.toUpperCase();
-  
-  // 4. Activar los interruptores y encender el segundero en vivo
   partidaIniciada = datos.partidaIniciada;
-  iniciarSegundero();
-  
+
+  // Si la partida ya había iniciado con el botón verde, escondemos el botón y prendemos el reloj
+  if (partidaIniciada) {
+    btnIniciarPartida.classList.add('oculto');
+    iniciarSegundero();
+  }
 });
 
-// --- 6. NUEVO: RECEPTOR PARA ARRANCAR EL TEMPORIZADOR AL MISMO TIEMPO ---
+// --- 6. RECEPTOR PARA INICIAR EL TEMPORIZADOR AL MISMO TIEMPO ---
 socket.on('servidor-inicio-partida', () => {
   partidaIniciada = true;
-  btnIniciarPartida.classList.add('oculto'); // Esconde el botón verde de la barra superior
-  iniciarSegundero(); // Despierta el reloj de las blancas en perfecta sincronía
+  btnIniciarPartida.classList.add('oculto'); 
+  iniciarSegundero(); 
 });
+
+
