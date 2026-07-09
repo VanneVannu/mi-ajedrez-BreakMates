@@ -616,18 +616,42 @@ body {
   box-shadow: 0 0 20px rgba(0, 240, 255, 0.6) !important;
 }
 
-/* --- ESTILO PARA EL CÓDIGO DE LA SALA EN LA BARRA SUPERIOR --- */
-#txt-sala-actual {
-  color: #ff007f !important; /* Fucsia Neón brillante */
-  text-shadow: 0 0 8px #ff007f !important; /* Brillo neón */
-  font-weight: bold !important;
-  font-family: monospace !important; /* Estilo código digital */
-  letter-spacing: 1px !important;
-  font-size: 13px !important;
-  background-color: rgba(255, 0, 127, 0.05) !important; /* Sutil fondo enmarcado */
-  border: 1px solid rgba(255, 0, 127, 0.2) !important;
+/* --- ESTILO PARA EL PANEL DEL CÓDIGO LATERAL --- */
+#contenedor-codigo-lateral {
+  width: 220px !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 2px solid #5c134f !important;
   border-radius: 4px !important;
-  padding: 4px 10px !important;
-  align-self: center !important; /* Lo alinea perfectamente en el centro de la fila */
+  display: flex !important;
+  flex-direction: column !important;
+  margin-top: 15px !important; /* Separación con respecto a la base del chat */
+  box-shadow: 0 0 15px rgba(92, 19, 79, 0.3) !important;
 }
 
+#titulo-codigo-lateral {
+  background-color: #5c134f !important;
+  color: #00f0ff !important;
+  text-shadow: 0 0 5px #00f0ff !important;
+  text-align: center !important;
+  padding: 6px !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+  letter-spacing: 1px !important;
+}
+
+#caja-codigo-texto {
+  padding: 15px !important;
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+#txt-sala-actual {
+  color: #ff007f !important; /* Fucsia Cyberpunk */
+  text-shadow: 0 0 8px #ff007f !important;
+  font-weight: bold !important;
+  font-family: monospace !important; /* Fuente digital */
+  font-size: 16px !important; /* Texto más grande y legible */
+  letter-spacing: 2px !important;
+}
