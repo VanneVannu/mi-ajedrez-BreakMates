@@ -277,6 +277,14 @@ btnIniciarPartida.addEventListener('click', () => {
 
 // Temporizador
 btnReiniciar.addEventListener('click', () => {
+
+  // --- NUEVO FILTRO DE SEGURIDAD: CANDADO DE REINICIO ---
+  // Si eres espectador, el juego bloquea el botón para proteger la partida en curso
+  if (bandoAsignado === "espectador") {
+    alert("Solo los jugadores activos (Blancas o Negras) pueden reiniciar la partida.");
+    return; 
+  }
+  
   casillas.forEach((casilla, index) => {
     casilla.textContent = estadoInicial[index];
     casilla.classList.remove('seleccionada');
