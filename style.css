@@ -594,6 +594,7 @@ body {
 .divisor-lobby:not(:empty)::before { margin-right: .5em !important; }
 .divisor-lobby:not(:empty)::after { margin-left: .5em !important; }
 
+/*Código de sala */
 #btn-crear-codigo-sala {
   background-color: transparent !important;
   border: 2px solid #00f0ff !important;
@@ -614,3 +615,19 @@ body {
   color: #000 !important;
   box-shadow: 0 0 20px rgba(0, 240, 255, 0.6) !important;
 }
+
+/* --- ESTILO PARA EL CÓDIGO DE LA SALA EN LA BARRA SUPERIOR --- */
+#txt-sala-actual {
+  color: #ff007f !important; /* Fucsia Neón brillante */
+  text-shadow: 0 0 8px #ff007f !important; /* Brillo neón */
+  font-weight: bold !important;
+  font-family: monospace !important; /* Estilo código digital */
+  letter-spacing: 1px !important;
+  font-size: 13px !important;
+  background-color: rgba(255, 0, 127, 0.05) !important; /* Sutil fondo enmarcado */
+  border: 1px solid rgba(255, 0, 127, 0.2) !important;
+  border-radius: 4px !important;
+  padding: 4px 10px !important;
+  align-self: center !important; /* Lo alinea perfectamente en el centro de la fila */
+}
+
