@@ -662,3 +662,15 @@ body {
   letter-spacing: 1px !important;
 }
 
+/* --- ESTILO PARA EL COPYRIGHT DEL PIE DE PÁGINA --- */
+#pie-pagina {
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 10px !important;
+  color: rgba(255, 255, 255, 0.3) !important; /* Blanco semitransparente muy elegante */
+  letter-spacing: 1px !important;
+  margin-top: 25px !important; /* Espacio de separación con la zona del tablero */
+  padding-bottom: 15px !important;
+  font-family: sans-serif !important;
+  text-transform: uppercase !important; /* Pone todo el texto en mayúsculas estéticas */
+}
