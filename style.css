@@ -662,15 +662,17 @@ body {
   letter-spacing: 1px !important;
 }
 
-/* --- ESTILO PARA EL COPYRIGHT DEL PIE DE PÁGINA --- */
+/* --- ESTILO PARA EL COPYRIGHT UNIVERSAL (LOBBY Y JUEGO) --- */
 #pie-pagina {
   width: 100% !important;
   text-align: center !important;
   font-size: 10px !important;
-  color: rgba(255, 255, 255, 0.3) !important; /* Blanco semitransparente muy elegante */
+  color: rgba(255, 255, 255, 0.25) !important; /* Blanco sutil para que no distraiga */
   letter-spacing: 1px !important;
-  margin-top: 25px !important; /* Espacio de separación con la zona del tablero */
-  padding-bottom: 15px !important;
+  padding: 20px 0 !important;
   font-family: sans-serif !important;
-  text-transform: uppercase !important; /* Pone todo el texto en mayúsculas estéticas */
+  text-transform: uppercase !important;
+  margin-top: auto !important; /* Truco para que siempre busque el fondo de la pantalla disponible */
+  position: relative !important;
+  z-index: 10000; /* Asegura que se dibuje por encima del fondo oscuro del lobby */
 }
