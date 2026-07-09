@@ -30,8 +30,8 @@ btnEntrarSala.addEventListener('click', () => {
   contenedorPrincipal.classList.remove('oculto');
 
    // NUEVO: Imprimir el código arriba al unirte a la sala de tu oponente
-  txtSalaActual.textContent = `SALA: ${nombreSala.toUpperCase()}`;
-
+   txtSalaActual.textContent = nombreSala.toUpperCase();
+   
   // 2. Conectarse formalmente a la habitación digital en el servidor
   socket.emit('unirse-a-sala', nombreSala);
   actualizarBrilloRelojes();
